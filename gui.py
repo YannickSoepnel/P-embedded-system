@@ -22,17 +22,25 @@ main2.pack()
 Label1 = Label(main2, text='IT-Works', fg='black')
 Label1.grid(row=0,column=1, columnspan= 4)
 
-def weg():
-    Label1.grid_forget()
+def uitrollen():
+    status = 0
+    if (status == 0):
+        Label6 = Label(main2, text='uitgerold', fg='red')
+        Label6.grid(row=1, column=5, columnspan=1)
 
-def zien():
-    Label1.grid(row=0, column=1, columnspan=4)
+def inrollen():
+    status = 1
+    if (status == 1):
+        Label6 = Label(main2, text='ingerold', fg='green')
+        Label6.grid(row=1, column=5, columnspan=1)
 
+Label5 = Label(main2, text='Status: ', fg='black')
+Label5.grid(row=1,column=4, columnspan= 1)
 
-button1 = Button(main2,width=10, height=2, text="Uitrollen", fg="black", command=weg)
+button1 = Button(main2,width=10, height=2, text="Uitrollen", fg="black", command=uitrollen)
 button1.grid(row=1,column=2)
 
-button2 = Button(main2,width=10, height=2, text="Inrollen", fg="black", command=zien)
+button2 = Button(main2,width=10, height=2, text="Inrollen", fg="black", command=inrollen)
 button2.grid(row=1,column=3)
 
 Label2 = Label(main2, text='Temperatuur \n 0 tot 100 celcius', fg='black')
