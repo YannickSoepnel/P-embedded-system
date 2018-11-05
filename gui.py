@@ -34,6 +34,15 @@ def inrollen():
         Label6 = Label(main2, text='ingerold', fg='green')
         Label6.grid(row=1, column=5, columnspan=1)
 
+
+
+def print_licht(lux):
+    print('Licht intens: ' + lux)
+
+
+def print_tempratuur(temp):
+    print('Tempratuur: ' + temp)
+
 Label5 = Label(main2, text='Status: ', fg='black')
 Label5.grid(row=1,column=4, columnspan= 1)
 
@@ -43,16 +52,18 @@ button1.grid(row=1,column=2)
 button2 = Button(main2,width=10, height=2, text="Inrollen", fg="black", command=inrollen)
 button2.grid(row=1,column=3)
 
-Label2 = Label(main2, text='Temperatuur \n 0 tot 100 celcius', fg='black')
+Label2 = Label(main2, text='Temperatuur \n -20 tot 50 celcius', fg='black')
 Label2.grid(row=2,column=0)
 
-temperatuur = Scale(main2, from_=100, to=0)
+temperatuur = Scale(main2, from_=50, to=-20, command=print_tempratuur, length=200)
+temperatuur.set(20)
 temperatuur.grid(row=3,column=0)
 
-Label3 = Label(main2, text='Lichtintensiteit \n 0 tot 100', fg='black')
+Label3 = Label(main2, text='Lichtintensiteit \n 0.1 tot 100.000 Lux', fg='black')
 Label3.grid(row=2,column=1)
 
-licht = Scale(main2, from_=100, to=0)
+licht = Scale(main2, from_=100000, to=0.01, command=print_licht, length=200)
+licht.set(500)
 licht.grid(row=3,column=1)
 
 Label4 = Label(main2, text='Lichtintensiteit', fg='black')
