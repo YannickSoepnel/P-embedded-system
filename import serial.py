@@ -2,7 +2,7 @@ import serial
 import time
 import struct
 
-ser = serial.Serial('COM6',19200)  	#open de connectie
+ser = serial.Serial('/dev/tty.usbmodem1411',19200)  	#open de connectie
 print(ser)							#print de data van de 
 
 numPoints = 3
