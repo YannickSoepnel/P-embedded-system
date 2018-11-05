@@ -38,7 +38,7 @@ def tkinter_loop(scale):
 scale = ScaleValue()
 threading.Thread(target=tkinter_loop, args=(scale,)).start()
 
-
+#testing a commit with this comment
 while 1:
     time.sleep(1)
     print(scale.value1, scale.value2)
