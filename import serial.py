@@ -8,6 +8,9 @@ print(ser)							#print de data van de
 numPoints = 3
 dataList = [0]*numPoints	#maak eenn lijst met 3 gtallen
 onoff = 0
+count = 0 
+list1 = []
+list2 = []
 
 def getValues():			#een functie die de poort uitleest
 	s = ser.read()
@@ -25,6 +28,15 @@ def sendValues(onoff):		#switch de waarde van onoff tussen 0xff en 0x0f
 		onoff = 0xff
 	return onoff
 
+def printValues():
+	print('dataList')
+	print(dataList)
+	print('list1 (light )')
+	print(list1)
+	print('list2 (temperature)')
+	print(list2)
+
+
 while True:
 	
 	userInput = input('send? Press 1!, recieve? Press 2!') 	#vraag de gebruiker of hij data wil
@@ -34,7 +46,10 @@ while True:
 			data = getValues().hex() 	#zet de data van de poort in een variabele
 			data = hexToInt(data)		#zet de hexadecimale data om in een integer
 			dataList[i] = data 			#zet de data in de lisjt
-		print(dataList)					#print de lijst
+		list1.append((count, dataList[1]))
+		list2.append((count, dataList[2]))
+		count = count + 1
+		printValues()
 
 	if userInput == '1':				#kijk of de input '1' is
 		onoff = sendValues(onoff)		#verander de waarde van onoff
