@@ -114,4 +114,14 @@ def plot_graph2():
 plot_graph()
 plot_graph2()
 
+def grafiek():
+    a=24
+    b=16
+    x.append(a)
+    y.append(b)
+    plot_graph()
+
+button3 = Button(main2, text="GRAFIEK", fg="black",width=10, height=2, command=grafiek)
+button3.grid(row=4,column=2,columnspan=1)
+
 root.mainloop()

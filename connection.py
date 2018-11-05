@@ -11,6 +11,8 @@ onoff = 0
 count = 0 
 list1 = []
 list2 = []
+list3 = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9)]
+list4 = [(0, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 7), (6, 8), (7, 9), (8, 10)]
 
 def getValues():			#een functie die de poort uitleest
 	s = ser.read()
