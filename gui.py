@@ -14,10 +14,10 @@ class Program:
     main = Frame(bg='grey')
     main.pack(side=TOP)
 
+
     status=0
 
     def __init__(self):
-
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -52,7 +52,7 @@ class Program:
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
 
-        self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
+        self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit) # Quit program
         self.quitButton.grid(row=1, column=10)
 
 
