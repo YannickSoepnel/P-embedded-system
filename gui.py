@@ -52,6 +52,9 @@ class Program:
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
 
+        self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
+        self.quitButton.grid(row=1, column=10)
+
 
         self.Label17 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label17.grid(row=5, column=0, columnspan=4, pady=30)
@@ -72,8 +75,6 @@ class Program:
         self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
         self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         self.show_graph5()
-
-
 
 
     def update(self):
