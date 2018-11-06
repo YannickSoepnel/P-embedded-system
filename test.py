@@ -14,7 +14,3 @@ class data:
             listy.append(list1[count2][1])
             count2+=1
 
-    f = open("input_data.txt", "w")
-    while True:
-        for x in listx:
-            f.write(str(x))
