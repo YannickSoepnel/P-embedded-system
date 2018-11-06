@@ -11,6 +11,9 @@ from test import data
 
 class Program:
     style.use('ggplot')
+
+    root = Tk()
+    root.title('IT-works')
     main = Frame(bg='grey')
     main.pack(side=TOP)
 
