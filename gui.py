@@ -10,9 +10,11 @@ from test import data
 
 
 class Program:
-
+    style.use('ggplot')
     main = Frame(bg='grey')
     main.pack(side=TOP)
+
+    status=0
 
     def __init__(self):
 
@@ -43,7 +45,7 @@ class Program:
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
         self.Label16.grid(row=0, column=8, columnspan=2)
-        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
+        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.update)
         self.button.grid(row=1, column=8)
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
@@ -68,6 +70,9 @@ class Program:
         self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
         self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         self.show_graph5()
+
+    def update(self):
+        print()
 
     def temperatuur(self, value):
         self.Label3 = Label(self.main, text=value, fg='black', bg='grey')
@@ -174,6 +179,9 @@ class Program:
         graph_widget1 = canvas1.get_tk_widget()
         graph_widget1.grid(row=8, column=4, columnspan=3,sticky='nsew', padx=80)
 
+
 program = Program()
+
+
 
 mainloop()
