@@ -27,7 +27,8 @@ class Program:
         self.Label4.grid(row=2, column=0, columnspan=2)
         self.Label5 = Label(self.main, text='0', fg='black', bg='grey')
         self.Label5.grid(row=1, column=2, padx=50)
-        self.temperatuur = Scale(self.main, orient='horizontal', from_=0, to=100, length=200, command= self.temperatuur)
+        self.temperatuur = Scale(self.main, orient='horizontal', from_=-20, to=50, length=200, command= self.temperatuur)
+        self.temperatuur.set(20)
         self.temperatuur.grid(row=4, column=1, columnspan=2)
 
 
@@ -40,12 +41,13 @@ class Program:
         self.Label14.grid(row=2, column=3, columnspan=2)
         self.Label15 = Label(self.main, text='0', fg='black', bg='grey')
         self.Label15.grid(row=1, column=5, padx=50)
-        self.licht = Scale(self.main, orient='horizontal', from_=0, to=100, length=200, command= self.licht)
+        self.licht = Scale(self.main, orient='horizontal', from_=0.1, to=100000, length=200, command=self.licht)
+        self.licht.set(1000)
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
         self.Label16.grid(row=0, column=8, columnspan=2)
-        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.update)
+        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
         self.button.grid(row=1, column=8)
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
@@ -71,27 +73,32 @@ class Program:
         self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         self.show_graph5()
 
+
+
+
     def update(self):
         print()
 
-    def temperatuur(self, value):
-        self.Label3 = Label(self.main, text=value, fg='black', bg='grey')
+    def temperatuur(self, temp):
+        self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
         self.Label3.grid(row=2, column=2)
+        print("Tempratuur: " + temp)
 
-    def licht(self, value):
-        self.Label13 = Label(self.main, text=value, fg='black', bg='grey')
+    def licht(self, lux):
+        self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
+        print("Lux: " + lux)
 
     def inrollen(self):
         status = 1
         if (status == 1):
-            Label22 = Label(self.main, text='ingerold', fg='red', bg='grey')
+            Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
             Label22.grid(row=4, column=8, columnspan=2)
 
     def uitrollen(self):
         status = 0
         if (status == 0):
-            Label22 = Label(self.main, text='uitgerold', fg='green', bg='grey')
+            Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
             Label22.grid(row=4, column=8, columnspan=2)
 
     def show_graph(self):
