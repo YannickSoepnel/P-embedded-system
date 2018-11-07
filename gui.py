@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
 from test import data
-from connection import connectie1
+#from connection import connectie1
 import threading
 
 
@@ -27,7 +27,7 @@ class Program:
 
     def __init__(self):
 
-        connectie1.recieve_data()
+        #connectie1.recieve_data()
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -51,7 +51,7 @@ class Program:
         self.Label14.grid(row=2, column=3, columnspan=2)
         self.Label15 = Label(self.main, text='0', fg='black', bg='grey')
         self.Label15.grid(row=1, column=5, padx=50)
-        self.licht = Scale(self.main, orient='horizontal', from_=0.1, to=100000, length=200, command=self.licht)
+        self.licht = Scale(self.main, orient='horizontal', from_=0.1, to=130000, length=200, command=self.licht)
         self.licht.set(1000)
         self.licht.grid(row=4, column=4, columnspan=2)
 
@@ -88,6 +88,10 @@ class Program:
 
         self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
+
+        self.update = Button(self.main, text="Update", width=10, height=1, command=self.update)
+        self.update.grid(row=4, column=7)
+
 
     def create_window(self):
         top = Toplevel(bg='grey')
@@ -130,11 +134,13 @@ class Program:
         Label77.grid(row=8, column=2)
 
         button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
-        button.grid(row=9, column=1, )
+        button.grid(row=9, column=1)
 
 
     def update(self):
-        print()
+        while 1:
+            time.sleep(1)
+            print('true')
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
