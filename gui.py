@@ -9,6 +9,7 @@ from matplotlib import style
 from test import data
 
 
+
 class Program:
     style.use('ggplot')
 
