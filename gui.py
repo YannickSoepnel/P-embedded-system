@@ -79,6 +79,51 @@ class Program:
         self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         self.show_graph5()
 
+        self.button = Button(self.main, text="Klik voor info", command=self.create_window)
+        self.button.grid(row=4, column=6)
+
+    def create_window(self):
+        top = Toplevel()
+        top.title("Info")
+
+        Label1 = Label(top, text='Zonlicht:')
+        Label1.grid(row=2, column=1)
+        label11 = Label(top, text='100 000 - 130 000 lux')
+        label11.grid(row=2, column=2)
+
+        Label2 = Label(top, text='Daglicht, indirect zonlicht:')
+        Label2.grid(row=3, column=1)
+        Label22 = Label(top, text='10 000 - 20 000 lux')
+        Label22.grid(row=3, column=2)
+
+        Label3 = Label(top, text='Bewolkte dag:')
+        Label3.grid(row=4, column=1)
+        Label33 = Label(top, text='1000 lux')
+        Label33.grid(row=4, column=2)
+
+        Label4 = Label(top, text='Kantoor:')
+        Label4.grid(row=5, column=1)
+        Label44 = Label(top, text='500 lux')
+        Label44.grid(row=5, column=2)
+
+        Label5 = Label(top, text='Erg donkere dag: ')
+        Label5.grid(row=6, column=1)
+        Label55 = Label(top, text='100 lux')
+        Label55.grid(row=6, column=2)
+
+        Label6 = Label(top, text='Schemering:')
+        Label6.grid(row=7, column=1)
+        Label66 = Label(top, text='10 lux')
+        Label66.grid(row=7, column=2)
+
+        Label7 = Label(top, text='Donkere schemering:')
+        Label7.grid(row=8, column=1)
+        Label77 = Label(top, text='1 lux')
+        Label77.grid(row=8, column=2)
+
+        button = Button(top, text="Exit info", command=top.destroy)
+        button.grid(row=9, column=1)
+
 
     def update(self):
         print()
