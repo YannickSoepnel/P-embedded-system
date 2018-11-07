@@ -14,3 +14,7 @@ class data:
             listy.append(list1[count2][1])
             count2+=1
 
+schermstatus = 0
+sendData = 0
+lijst1 = []
+lijst2 = []

@@ -7,6 +7,10 @@ from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
 from test import data
+from connection import connectie1
+import threading
+
+
 
 
 
@@ -18,10 +22,12 @@ class Program:
     main = Frame(bg='grey')
     main.pack(side=TOP)
 
-
     status=0
+    count = 0
 
     def __init__(self):
+
+        connectie1.recieve_data()
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -56,7 +62,7 @@ class Program:
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
 
-        self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit) # Quit program
+        self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
         self.quitButton.grid(row=1, column=10)
 
 
@@ -140,16 +146,20 @@ class Program:
         print("Lux: " + lux)
 
     def inrollen(self):
+        connectie1.senddata(0xff)
         status = 1
         if (status == 1):
             Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
             Label22.grid(row=4, column=8, columnspan=2)
 
     def uitrollen(self):
+        connectie1.senddata(0x0f)
         status = 0
         if (status == 0):
             Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
             Label22.grid(row=4, column=8, columnspan=2)
+
+
 
     def show_graph(self):
 
@@ -165,7 +175,7 @@ class Program:
         canvas = FigureCanvasTkAgg(figure, master=self.main)
         canvas.draw()
 
-        graph_widget= canvas.get_tk_widget()
+        graph_widget = canvas.get_tk_widget()
         graph_widget.grid(row=6,column=1,columnspan=2, padx=80, sticky='nsew')
 
     def show_graph2(self):
@@ -238,7 +248,5 @@ class Program:
 
 
 program = Program()
-
-
 
 mainloop()
