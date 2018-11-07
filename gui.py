@@ -90,46 +90,47 @@ class Program:
         self.button.grid(row=4, column=6)
 
     def create_window(self):
-        top = Toplevel()
+        top = Toplevel(bg='grey')
         top.title("Info")
 
-        Label1 = Label(top, text='Zonlicht:')
+
+        Label1 = Label(top, text='Zonlicht:', bg='grey')
         Label1.grid(row=2, column=1)
-        label11 = Label(top, text='100 000 - 130 000 lux')
+        label11 = Label(top, text='100 000 - 130 000 lux', bg='grey')
         label11.grid(row=2, column=2)
 
-        Label2 = Label(top, text='Daglicht, indirect zonlicht:')
+        Label2 = Label(top, text='Daglicht, indirect zonlicht:', bg='grey')
         Label2.grid(row=3, column=1)
-        Label22 = Label(top, text='10 000 - 20 000 lux')
+        Label22 = Label(top, text='10 000 - 20 000 lux', bg='grey')
         Label22.grid(row=3, column=2)
 
-        Label3 = Label(top, text='Bewolkte dag:')
+        Label3 = Label(top, text='Bewolkte dag:', bg='grey')
         Label3.grid(row=4, column=1)
-        Label33 = Label(top, text='1000 lux')
+        Label33 = Label(top, text='1000 lux', bg='grey')
         Label33.grid(row=4, column=2)
 
-        Label4 = Label(top, text='Kantoor:')
+        Label4 = Label(top, text='Kantoor:', bg='grey')
         Label4.grid(row=5, column=1)
-        Label44 = Label(top, text='500 lux')
+        Label44 = Label(top, text='500 lux', bg='grey')
         Label44.grid(row=5, column=2)
 
-        Label5 = Label(top, text='Erg donkere dag: ')
+        Label5 = Label(top, text='Erg donkere dag: ', bg='grey')
         Label5.grid(row=6, column=1)
-        Label55 = Label(top, text='100 lux')
+        Label55 = Label(top, text='100 lux', bg='grey')
         Label55.grid(row=6, column=2)
 
-        Label6 = Label(top, text='Schemering:')
+        Label6 = Label(top, text='Schemering:', bg='grey')
         Label6.grid(row=7, column=1)
-        Label66 = Label(top, text='10 lux')
+        Label66 = Label(top, text='10 lux', bg='grey')
         Label66.grid(row=7, column=2)
 
-        Label7 = Label(top, text='Donkere schemering:')
+        Label7 = Label(top, text='Donkere schemering:', bg='grey')
         Label7.grid(row=8, column=1)
-        Label77 = Label(top, text='1 lux')
+        Label77 = Label(top, text='1 lux', bg='grey')
         Label77.grid(row=8, column=2)
 
-        button = Button(top, text="Exit info", command=top.destroy)
-        button.grid(row=9, column=1)
+        button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
+        button.grid(row=9, column=1, )
 
 
     def update(self):
