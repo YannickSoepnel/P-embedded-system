@@ -28,6 +28,7 @@ class Program:
     def __init__(self):
 
         #connectie1.recieve_data()
+        self.handle_click()
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -89,7 +90,7 @@ class Program:
         self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
 
-        self.update = Button(self.main, text="Update", width=10, height=1, command=self.update)
+        self.update = Button(self.main, text="Update", width=10, height=1, command=self.handle_click)
         self.update.grid(row=4, column=7)
 
 
@@ -137,10 +138,21 @@ class Program:
         button.grid(row=9, column=1)
 
 
-    def update(self):
-        while 1:
-            time.sleep(1)
-            print('true')
+    def handle_click(self):
+        win = Toplevel()
+        win.transient()
+        Label(win, text='Please wait...').pack()
+        i = 5
+        def callback():
+            nonlocal i, win
+            print(i)
+            i -= 1
+            if not i:
+                win.destroy()
+                self.handle_click()
+            else:
+               self.root.after(1000, callback)
+        self.root.after(1000, callback)
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
