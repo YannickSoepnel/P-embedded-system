@@ -139,20 +139,31 @@ class Program:
 
 
     def handle_click(self):
-        win = Toplevel()
-        win.transient()
-        Label(win, text='Please wait...').pack()
         i = 5
         def callback():
-            nonlocal i, win
+            nonlocal i
             print(i)
             i -= 1
             if not i:
-                win.destroy()
                 self.handle_click()
+                self.printing()
+                self.show_graph()
             else:
-               self.root.after(1000, callback)
-        self.root.after(1000, callback)
+               self.root.after(10, callback)
+        self.root.after(10, callback)
+
+    def printing(self):
+        lengtex = len(data.listx)
+        lengtey = len(data.listy)
+        x1 = data.listx[lengtex - 1] + 1
+        if(lengtey < 20):
+            y1 = data.listy[lengtey - 1] + 1
+        elif(lengtey > -20):
+            y1 = data.listy[lengtey - 1] - 1
+        data.listx.append(x1)
+        data.listy.append(y1)
+
+
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
