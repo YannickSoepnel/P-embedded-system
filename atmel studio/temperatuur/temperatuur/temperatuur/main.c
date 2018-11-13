@@ -14,9 +14,9 @@
 #define UBBRVAL 51
 
 uint8_t data;
-uint8_t value;
-
-
+double temp;
+double voltage;
+double tempC;
 void uart_init()
 {
 	// set the baud rate
@@ -27,15 +27,6 @@ void uart_init()
 	UCSR0B = _BV(TXEN0) | _BV(RXEN0);
 	// set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
-}
-
-void transmit(uint8_t data)
-{
-	// wait for an empty transmit buffer
-	// UDRE is set when the transmit buffer is empty
-	loop_until_bit_is_set(UCSR0A, UDRE0);
-	// send the data
-	UDR0 = data;
 }
 
 void init_adc()
@@ -53,6 +44,21 @@ uint8_t get_adc_value()
 	return ADCH; // 8-bit resolution, left adjusted
 }
 
+void transmit(uint8_t data)
+{
+	// wait for an empty transmit buffer
+	// UDRE is set when the transmit buffer is empty
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	// send the data
+	UDR0 = data;
+}
+
+uint8_t readlight()
+{
+	uint8_t value;
+	value = PINC;
+	return value;
+}
 
 int main(void)
 {
@@ -63,7 +69,10 @@ int main(void)
     {
 		_delay_ms(300);
 		data = get_adc_value();
-		transmit(data);
+		voltage = data * 0.004882814 * 5000;
+		tempC = (voltage - 500) * 0.1;
+		
+		transmit(tempC);
 			
     }
 }

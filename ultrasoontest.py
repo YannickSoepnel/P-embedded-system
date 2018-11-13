@@ -28,13 +28,13 @@ class Connectie:
 	def main(self):
 		count = 0
 		while True:
-			count = count + 1
+			#count = count + 1
 			data = self.recieve_data()
-			print("X")
-			print(count)
-			print("Y")
+			#print("X")
+			#print(count)
+			#print("Y")
 			print(data)
-			time.sleep(0.05)
+			time.sleep(0.3)
 
 
 
