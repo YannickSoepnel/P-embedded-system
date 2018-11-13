@@ -28,6 +28,7 @@ class Program:
     def __init__(self):
 
         #connectie1.recieve_data()
+        self.handle_click()
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -89,7 +90,7 @@ class Program:
         self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
 
-        self.update = Button(self.main, text="Update", width=10, height=1, command=self.update)
+        self.update = Button(self.main, text="Update", width=10, height=1, command=self.handle_click)
         self.update.grid(row=4, column=7)
 
 
@@ -137,10 +138,32 @@ class Program:
         button.grid(row=9, column=1)
 
 
-    def update(self):
-        while 1:
-            time.sleep(1)
-            print('true')
+    def handle_click(self):
+        i = 5
+        def callback():
+            nonlocal i
+            print(i)
+            i -= 1
+            if not i:
+                self.handle_click()
+                self.printing()
+                self.show_graph()
+            else:
+               self.root.after(10, callback)
+        self.root.after(10, callback)
+
+    def printing(self):
+        lengtex = len(data.listx)
+        lengtey = len(data.listy)
+        x1 = data.listx[lengtex - 1] + 1
+        if(lengtey < 20):
+            y1 = data.listy[lengtey - 1] + 1
+        elif(lengtey > -20):
+            y1 = data.listy[lengtey - 1] - 1
+        data.listx.append(x1)
+        data.listy.append(y1)
+
+
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
