@@ -3,31 +3,31 @@ lichtintensiteisensor.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  00000160  2**0
+  0 .data         00000000  00800100  00800100  00000164  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000000ec  00000000  00000000  00000074  2**1
+  1 .text         000000f0  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000001  00800100  00800100  00000160  2**0
+  2 .bss          00000002  00800100  00800100  00000164  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000160  2**0
+  3 .comment      00000030  00000000  00000000  00000164  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000190  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000194  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000038  00000000  00000000  000001d0  2**0
+  5 .debug_aranges 00000038  00000000  00000000  000001d4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000007d1  00000000  00000000  00000208  2**0
+  6 .debug_info   000007b1  00000000  00000000  0000020c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000006eb  00000000  00000000  000009d9  2**0
+  7 .debug_abbrev 000006ed  00000000  00000000  000009bd  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000002f0  00000000  00000000  000010c4  2**0
+  8 .debug_line   000002f0  00000000  00000000  000010aa  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000054  00000000  00000000  000013b4  2**2
+  9 .debug_frame  00000054  00000000  00000000  0000139c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000040e  00000000  00000000  00001408  2**0
+ 10 .debug_str    0000040e  00000000  00000000  000013f0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000048  00000000  00000000  00001816  2**0
+ 11 .debug_loc    00000048  00000000  00000000  000017fe  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000028  00000000  00000000  0000185e  2**0
+ 12 .debug_ranges 00000028  00000000  00000000  00001846  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -78,19 +78,19 @@ Disassembly of section .text:
   7c:	1d 92       	st	X+, r1
 
 0000007e <.do_clear_bss_start>:
-  7e:	a1 30       	cpi	r26, 0x01	; 1
+  7e:	a2 30       	cpi	r26, 0x02	; 2
   80:	b2 07       	cpc	r27, r18
   82:	e1 f7       	brne	.-8      	; 0x7c <.do_clear_bss_loop>
   84:	0e 94 61 00 	call	0xc2	; 0xc2 <main>
-  88:	0c 94 74 00 	jmp	0xe8	; 0xe8 <_exit>
+  88:	0c 94 76 00 	jmp	0xec	; 0xec <_exit>
 
 0000008c <__bad_interrupt>:
   8c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
 00000090 <uart_init>:
+
 uint8_t readlight()
 {
-	uint8_t value;
 	value = PINC;
 	return value;
 }
@@ -144,26 +144,27 @@ int main(void)
   d6:	e1 f7       	brne	.-8      	; 0xd0 <main+0xe>
   d8:	00 c0       	rjmp	.+0      	; 0xda <main+0x18>
   da:	00 00       	nop
+	UDR0 = data;
 }
 
 uint8_t readlight()
 {
-	uint8_t value;
 	value = PINC;
   dc:	86 b1       	in	r24, 0x06	; 6
+  de:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <value>
     uart_init();
     while (1) 
     {
 		PORTC = 0;
 		_delay_ms(50);
 		data = readlight();
-  de:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+  e2:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
 		transmit(data);
-  e2:	0e 94 59 00 	call	0xb2	; 0xb2 <transmit>
-  e6:	f0 cf       	rjmp	.-32     	; 0xc8 <main+0x6>
+  e6:	0e 94 59 00 	call	0xb2	; 0xb2 <transmit>
+  ea:	ee cf       	rjmp	.-36     	; 0xc8 <main+0x6>
 
-000000e8 <_exit>:
-  e8:	f8 94       	cli
+000000ec <_exit>:
+  ec:	f8 94       	cli
 
-000000ea <__stop_program>:
-  ea:	ff cf       	rjmp	.-2      	; 0xea <__stop_program>
+000000ee <__stop_program>:
+  ee:	ff cf       	rjmp	.-2      	; 0xee <__stop_program>

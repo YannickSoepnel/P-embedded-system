@@ -14,6 +14,8 @@
 #define UBBRVAL 51
 
 uint8_t data;
+uint8_t value;
+
 
 void uart_init()
 {
@@ -38,7 +40,6 @@ void transmit(uint8_t data)
 
 uint8_t readlight()
 {
-	uint8_t value;
 	value = PINC;
 	return value;
 }
