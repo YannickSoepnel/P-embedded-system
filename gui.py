@@ -9,10 +9,9 @@ from matplotlib import style
 from test import data
 #from connection import connectie1
 import threading
+import serial
 
-
-
-
+ser = serial.Serial('/dev/tty.usbmodem1411',19200)
 
 class Program:
     style.use('ggplot')
@@ -24,6 +23,10 @@ class Program:
 
     status=0
     count = 0
+
+    countx = 0
+    countxlijst = []
+    datainformation = []
 
     def __init__(self):
 
@@ -58,9 +61,9 @@ class Program:
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
         self.Label16.grid(row=0, column=8, columnspan=2)
-        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
+        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=quit)
         self.button.grid(row=1, column=8)
-        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
+        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.printing)
         self.button2.grid(row=1, column=9)
 
         self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
@@ -75,23 +78,23 @@ class Program:
         self.Label18.grid(row=5, column=4, columnspan=4, pady=30)
         self.show_graph2()
 
-        self.Label19 = Label(self.main, text='Derde grafiek', fg='black', bg = 'grey')
-        self.Label19.grid(row=5, column=8, columnspan=4, pady=30)
-        self.show_graph3()
-
-        self.Label20 = Label(self.main, text='Vierde grafiek', fg='black', bg = 'grey')
-        self.Label20.grid(row=7, column=0, columnspan=4, pady=30)
-        self.show_graph4()
-
-        self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
-        self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
-        self.show_graph5()
+        # self.Label19 = Label(self.main, text='Derde grafiek', fg='black', bg = 'grey')
+        # self.Label19.grid(row=5, column=8, columnspan=4, pady=30)
+        # self.show_graph3()
+        #
+        # self.Label20 = Label(self.main, text='Vierde grafiek', fg='black', bg = 'grey')
+        # self.Label20.grid(row=7, column=0, columnspan=4, pady=30)
+        # self.show_graph4()
+        #
+        # self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
+        # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
+        # self.show_graph5()
 
         self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
 
         self.update = Button(self.main, text="Update", width=10, height=1, command=self.handle_click)
-        self.update.grid(row=4, column=7)
+        self.update.grid(row=3, column=7)
 
 
     def create_window(self):
@@ -142,28 +145,25 @@ class Program:
         i = 5
         def callback():
             nonlocal i
-            print(i)
             i -= 1
             if not i:
+                s = ser.read()
+                data = s.hex()
+                datainfo = int(data, 16)
+                self.datainformation.append(datainfo)
+                self.countx += 1
+                self.countxlijst.append(self.countx)
                 self.handle_click()
-                self.printing()
                 self.show_graph()
             else:
                self.root.after(10, callback)
         self.root.after(10, callback)
 
+
     def printing(self):
-        lengtex = len(data.listx)
-        lengtey = len(data.listy)
-        x1 = data.listx[lengtex - 1] + 1
-        if(lengtey < 20):
-            y1 = data.listy[lengtey - 1] + 1
-        elif(lengtey > -20):
-            y1 = data.listy[lengtey - 1] - 1
-        data.listx.append(x1)
-        data.listy.append(y1)
-
-
+        print(self.datainformation)
+        print(self.countx)
+        print(len(self.datainformation))
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
@@ -193,8 +193,8 @@ class Program:
 
     def show_graph(self):
 
-        self.x = data.listx
-        self.y = data.listy
+        self.x = self.countxlijst
+        self.y = self.datainformation
 
         figure = Figure(figsize=(4,4), dpi=70)
 
@@ -227,8 +227,8 @@ class Program:
 
     def show_graph3(self):
 
-        self.x = data.listx
-        self.y = data.listy
+        self.x = self.countxlijst
+        self.y = self.datainformation
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 
@@ -240,7 +240,7 @@ class Program:
         canvas1.draw()
 
         graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=6, column=8, columnspan=3,sticky='nsew', padx=80)
+        graph_widget1.grid(row=6, column=8, columnspan=2,sticky='nsew', padx=80)
 
     def show_graph4(self):
 
@@ -274,7 +274,7 @@ class Program:
         canvas1.draw()
 
         graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=8, column=4, columnspan=3,sticky='nsew', padx=80)
+        graph_widget1.grid(row=8, column=4, columnspan=2,sticky='nsew', padx=80)
 
 
 program = Program()
