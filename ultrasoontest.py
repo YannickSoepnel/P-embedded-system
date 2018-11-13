@@ -23,11 +23,17 @@ class Connectie:
 		
 		data = self.get_values().hex() 		# zet de data van de poort in een variabele
 		data = self.hex_to_int(data)		# zet de hexadecimale data om in een integer
-		print(data)
+		return data
 
 	def main(self):
+		count = 0
 		while True:
-			self.recieve_data()
+			count = count + 1
+			data = self.recieve_data()
+			print("X")
+			print(count)
+			print("Y")
+			print(data)
 			time.sleep(0.05)
 
 
