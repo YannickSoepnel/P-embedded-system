@@ -34,6 +34,9 @@ class Connectie:
 			#print(count)
 			#print("Y")
 			print(data)
+			time.sleep(0.01)
+			data = self.recieve_data()
+			print(data)
 			time.sleep(0.3)
 
 
