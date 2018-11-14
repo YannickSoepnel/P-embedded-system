@@ -63,8 +63,8 @@ class Program:
         self.Label12.grid(row=1, column=3, columnspan=2, padx=50)
         self.Label14 = Label(self.main, text='Grens licht intensiteit: ', fg='black', bg='grey')
         self.Label14.grid(row=2, column=3, columnspan=2)
-        self.licht = Scale(self.main, orient='horizontal', from_=50, to=300, length=200, command=self.licht)
-        self.licht.set(230)
+        self.licht = Scale(self.main, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
+        self.licht.set(130)
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
@@ -109,37 +109,37 @@ class Program:
 
         Label1 = Label(top, text='Zonlicht:', bg='grey')
         Label1.grid(row=2, column=1)
-        label11 = Label(top, text='250', bg='grey')
+        label11 = Label(top, text='165', bg='grey')
         label11.grid(row=2, column=2)
 
         Label2 = Label(top, text='Daglicht, indirect zonlicht:', bg='grey')
         Label2.grid(row=3, column=1)
-        Label22 = Label(top, text='240', bg='grey')
+        Label22 = Label(top, text='150', bg='grey')
         Label22.grid(row=3, column=2)
 
         Label3 = Label(top, text='Bewolkte dag:', bg='grey')
         Label3.grid(row=4, column=1)
-        Label33 = Label(top, text='230', bg='grey')
+        Label33 = Label(top, text='140', bg='grey')
         Label33.grid(row=4, column=2)
 
         Label4 = Label(top, text='Kantoor:', bg='grey')
         Label4.grid(row=5, column=1)
-        Label44 = Label(top, text='220', bg='grey')
+        Label44 = Label(top, text='120', bg='grey')
         Label44.grid(row=5, column=2)
 
         Label5 = Label(top, text='Erg donkere dag: ', bg='grey')
         Label5.grid(row=6, column=1)
-        Label55 = Label(top, text='150', bg='grey')
+        Label55 = Label(top, text='100', bg='grey')
         Label55.grid(row=6, column=2)
 
         Label6 = Label(top, text='Schemering:', bg='grey')
         Label6.grid(row=7, column=1)
-        Label66 = Label(top, text='100', bg='grey')
+        Label66 = Label(top, text='80', bg='grey')
         Label66.grid(row=7, column=2)
 
         Label7 = Label(top, text='Donkere schemering:', bg='grey')
         Label7.grid(row=8, column=1)
-        Label77 = Label(top, text='50', bg='grey')
+        Label77 = Label(top, text='40', bg='grey')
         Label77.grid(row=8, column=2)
 
         button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
