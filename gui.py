@@ -8,11 +8,11 @@ import matplotlib.animation as animation
 from matplotlib import style
 import serial
 import struct
-from test import data
 
-# lichtser = serial.Serial('COM6',19200)
-# temperatuurser = serial.Serial('COM10',19200)
-# # afstandser = serial.Serial('COM3',19200)
+
+#lichtser = serial.Serial('COM6',19200)
+temperatuurser = serial.Serial('COM10', 19200)
+# afstandser = serial.Serial('COM3',19200)
 # ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
 
 class Program:
@@ -34,11 +34,13 @@ class Program:
     licht_data = []
     afstand_data = []
     afstand_rolluik = 90
-    #laatste_afstand = 90
     uitrollen_status = 0
     groen = 0
     geel = 0
     rood = 0xff
+    lichtgrens = 130
+    tempgrens = 30
+    forced = 0
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -47,7 +49,7 @@ class Program:
 
         #connectie1.recieve_data()
         self.handle_click()
-        # lichtser.write(struct.pack('>B', self.rood))
+        # .write(struct.pack('>B', self.rood))
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -58,7 +60,7 @@ class Program:
         self.Label5 = Label(self.main, text='0', fg='black', bg='grey')
         self.Label5.grid(row=1, column=2, padx=50)
         self.temperatuur = Scale(self.main, orient='horizontal', from_=-20, to=50, length=200, command= self.temperatuur)
-        self.temperatuur.set(20)
+        self.temperatuur.set(30)
         self.temperatuur.grid(row=4, column=1, columnspan=2)
 
 
@@ -148,16 +150,25 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
-                # self.update_data()
-                self.afstand_meten_uitrollen()
-                self.afstand_meten_inrollen()
+                self.update_data()
+                #self.afstand_meten_uitrollen()
+                #self.afstand_meten_inrollen()
                 self.temperatuur_graph()
-                self.licht_graph()
+                #self.licht_graph()
                 #self.data_afstand()
                 self.updatelabels()
+                #self.check_licht()
             else:
                self.root.after(50, callback)
         self.root.after(50, callback)
+
+    def check_licht(self):
+        laatste_licht = self.licht_data[-1]
+        if int(laatste_licht) > int(self.lichtgrens) and self.uitrollen_status == 0:
+            self.uitrollen_arduino()
+            self.uitgerold()
+
+
 
     def update_data(self):
         data = self.recieve_data_licht()
@@ -169,10 +180,12 @@ class Program:
             data = self.recieve_data_licht()
             self.licht_data.append(data)
         data = self.recieve_data_temp()
-        self.temperatuur_data.append(data)
+        if data == 0xff:
+            data = self.recieve_data_temp()
+            data = data / 10
+            self.temperatuur_data.append(data)
 
     def recieve_data_licht(self):
-
         data = lichtser.read().hex()  # zet de data van de poort in een variabele
         data = int(data, 16)  # zet de hexadecimale data om in een integer
         return data
@@ -195,10 +208,12 @@ class Program:
 
 
     def temperatuur(self, temp):
+        self.tempgrens = temp
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
         self.Label3.grid(row=2, column=2)
 
     def licht(self, lux):
+        self.lichtgrens = lux
         self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
 
@@ -228,6 +243,7 @@ class Program:
         if(laatste_afstand > self.afstand_rolluik and self.uitrollen_status == 1):
             self.uitgerold()
 
+
     def afstand_meten_inrollen(self):
         #Als de afstand van de afstandsensor bij minder dan 10?? komt dan moet geel led uit en rood weer aan
         laatste_afstand = self.afstand_data[-1]
@@ -247,12 +263,12 @@ class Program:
         self.rood = 0xff
         temperatuurser.write(struct.pack('>B', self.rood))
 
-    def uitrollen(self):
+    def uitrollen(self):        #functie achter de knop
         self.uitrollen_arduino()
         Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
         Label22.grid(row=5, column=8, columnspan=2)
 
-    def inrollen(self):
+    def inrollen(self):         # functie achter de knop
         self.inrollen_arduino()
         Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
         Label22.grid(row=5, column=8, columnspan=2)
@@ -273,22 +289,16 @@ class Program:
     def update_value2(self):
         self.laatste_afstand = 9
 
-    #def data_afstand(self):
-    #   s = afstandser.read()
-    #    data = s.hex()
-    #   datainfo = int(data, 16)
-    #   self.afstand_data.append(datainfo)
-
     def temperatuur_graph(self):
 
-        # self.countx_temperatuur_lijst.append(self.countx_temperatuur)
-        # self.countx_temperatuur += 1
-        #
-        # self.x = self.countx_temperatuur_lijst[-20:]
-        # self.y = self.temperatuur_data[-20:]
+        self.countx_temperatuur_lijst.append(self.countx_temperatuur)
+        self.countx_temperatuur += 1
 
-        self.x = data.listx
-        self.y = data.listy
+        self.x = self.countx_temperatuur_lijst[-20:]
+        self.y = self.temperatuur_data[-20:]
+
+        #self.x = data.listx
+        #self.y = data.listy
 
         figure = Figure(figsize=(4,4), dpi=70)
 
@@ -305,14 +315,14 @@ class Program:
     def licht_graph(self):
 
 
-        # self.countx_licht_lijst.append(self.countx_licht)
-        # self.countx_licht += 1
-        #
-        # self.x = self.countx_licht_lijst[-10:]
-        # self.y = self.licht_data[-10:]
+        self.countx_licht_lijst.append(self.countx_licht)
+        self.countx_licht += 1
 
-        self.x = data.listx
-        self.y = data.listy
+        self.x = self.countx_licht_lijst[-10:]
+        self.y = self.licht_data[-10:]
+
+        # self.x = data.listx
+        # self.y = data.listy
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 

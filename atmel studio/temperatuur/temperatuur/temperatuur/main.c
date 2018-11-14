@@ -16,9 +16,9 @@
 
 uint8_t analog;
 
-double temp;
-double voltage;
-double tempC;
+float temp;
+float voltage;
+float tempC;
 
 void uart_init()
 {
@@ -93,12 +93,14 @@ int main(void)
 	DDRB = 0xff;
     while (1) 
     {
-		_delay_ms(50);
+		_delay_ms(500);
 		analog = get_adc_value();
-		voltage = analog * 0.004882814 * 5000;
-		tempC = (voltage - 500) * 0.1;
-		transmit(tempC);
-		
+		voltage = analog * 0.004882814;
+		tempC = (voltage - 0.5) * 100.0;
+		tempC = tempC * 10;
+		int sendtemp = tempC;
+		transmit(0xff);
+		transmit(sendtemp);
 		if(UDR0 != 0x00){
 			recieving();
 		}
