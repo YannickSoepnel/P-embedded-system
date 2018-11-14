@@ -21,12 +21,14 @@ class Program:
     main = Frame(bg='grey')
     main.pack(side=TOP)
 
-    status=0
+    status = 0
     count = 0
 
     countx = 0
     countxlijst = []
     datainformation = []
+
+    licht_last = datainformation[-1:]
 
     def __init__(self):
 
@@ -53,17 +55,15 @@ class Program:
         self.Label12.grid(row=1, column=3, columnspan=2, padx=50)
         self.Label14 = Label(self.main, text='Grens licht intensiteit: ', fg='black', bg='grey')
         self.Label14.grid(row=2, column=3, columnspan=2)
-        self.Label15 = Label(self.main, text='0', fg='black', bg='grey')
-        self.Label15.grid(row=1, column=5, padx=50)
-        self.licht = Scale(self.main, orient='horizontal', from_=0.1, to=130000, length=200, command=self.licht)
-        self.licht.set(1000)
+        self.licht = Scale(self.main, orient='horizontal', from_=50, to=300, length=200, command=self.licht)
+        self.licht.set(230)
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
         self.Label16.grid(row=0, column=8, columnspan=2)
-        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=quit)
+        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
         self.button.grid(row=1, column=8)
-        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.printing)
+        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
 
         self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
@@ -155,6 +155,8 @@ class Program:
                 self.countxlijst.append(self.countx)
                 self.handle_click()
                 self.show_graph()
+                self.Label15 = Label(self.main, text=self.datainformation[-1:], fg='black', bg='grey')
+                self.Label15.grid(row=1, column=5, padx=50)
             else:
                self.root.after(10, callback)
         self.root.after(10, callback)
@@ -168,26 +170,18 @@ class Program:
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
         self.Label3.grid(row=2, column=2)
-        print("Tempratuur: " + temp)
 
     def licht(self, lux):
         self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
-        print("Lux: " + lux)
 
     def inrollen(self):
-        connectie1.senddata(0xff)
-        status = 1
-        if (status == 1):
-            Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-            Label22.grid(row=4, column=8, columnspan=2)
+        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
+        Label22.grid(row=4, column=8, columnspan=2)
 
     def uitrollen(self):
-        connectie1.senddata(0x0f)
-        status = 0
-        if (status == 0):
-            Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
-            Label22.grid(row=4, column=8, columnspan=2)
+        Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
+        Label22.grid(row=4, column=8, columnspan=2)
 
 
 
