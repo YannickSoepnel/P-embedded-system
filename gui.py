@@ -32,8 +32,8 @@ class Program:
     temperatuur_data = []
     licht_data = []
     afstand_data = []
-    afstand_rolluik = 100
-    laatste_afstand = 90
+    afstand_rolluik = 90
+    #laatste_afstand = 90
     uitrollen_status = 0
     groen = 0
     geel = 0
@@ -226,13 +226,14 @@ class Program:
 
     def afstand_meten_uitrollen(self):
         #als de afstand van de afstand sensor overeen komt met de afstand die hij moet uitgerold zijn dan:
-        #
-        if(self.laatste_afstand > self.afstand_rolluik and self.uitrollen_status == 1):
+        laatste_afstand = self.afstand_data[-1]
+        if(laatste_afstand > self.afstand_rolluik and self.uitrollen_status == 1):
             self.uitgerold()
 
     def afstand_meten_inrollen(self):
         #Als de afstand van de afstandsensor bij minder dan 10?? komt dan moet geel led uit en rood weer aan
-        if(self.laatste_afstand < 10 and self.uitrollen_status == 0):
+        laatste_afstand = self.afstand_data[-1]
+        if(laatste_afstand < 10 and self.uitrollen_status == 0):
             self.ingerold()
 
     def uitgerold(self):
