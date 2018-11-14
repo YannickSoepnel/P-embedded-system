@@ -164,14 +164,16 @@ class Program:
                 # self.temperatuur_graph()
                 # self.licht_graph()
                 # self.data_afstand()
-                self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
-                self.Label15.grid(row=1, column=5, padx=50)
-                self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
-                self.afstand.grid(row=1, column=6, padx=50)
+                self.updatelabels()
             else:
                self.root.after(50, callback)
         self.root.after(50, callback)
 
+    def updatelabels(self):
+        self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
+        self.Label15.grid(row=1, column=5, padx=50)
+        self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
+        self.afstand.grid(row=1, column=6, padx=50)
 
 
     def temperatuur(self, temp):
@@ -221,12 +223,12 @@ class Program:
     def uitrollen(self):
         self.uitrollen_arduino()
         Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+        Label22.grid(row=5, column=8, columnspan=2)
 
     def inrollen(self):
         self.inrollen_arduino()
         Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+        Label22.grid(row=5, column=8, columnspan=2)
 
     def printing(self):
         print("Geel: ")
