@@ -11,7 +11,10 @@ from test import data
 import threading
 import serial
 
-ser = serial.Serial('COM3',19200)
+lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
+# temperatuurser = serial.Serial('COM3',19200)
+# afstandser = serial.Serial('COM3',19200)
+
 
 class Program:
     style.use('ggplot')
@@ -21,12 +24,18 @@ class Program:
     main = Frame(bg='grey')
     main.pack(side=TOP)
 
-    status=0
+    status = 0
     count = 0
 
-    countx = 0
-    countxlijst = []
-    datainformation = []
+    countx_temperatuur = 0
+    countx_licht = 0
+    countx_temperatuur_lijst = []
+    countx_licht_lijst = []
+    temperatuur_data = []
+    licht_data = []
+
+    temperatuur_last = temperatuur_data[-1:]
+    licht_last = licht_data[-1:]
 
     def __init__(self):
 
@@ -53,17 +62,15 @@ class Program:
         self.Label12.grid(row=1, column=3, columnspan=2, padx=50)
         self.Label14 = Label(self.main, text='Grens licht intensiteit: ', fg='black', bg='grey')
         self.Label14.grid(row=2, column=3, columnspan=2)
-        self.Label15 = Label(self.main, text='0', fg='black', bg='grey')
-        self.Label15.grid(row=1, column=5, padx=50)
-        self.licht = Scale(self.main, orient='horizontal', from_=0.1, to=130000, length=200, command=self.licht)
-        self.licht.set(1000)
+        self.licht = Scale(self.main, orient='horizontal', from_=50, to=300, length=200, command=self.licht)
+        self.licht.set(230)
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
         self.Label16.grid(row=0, column=8, columnspan=2)
-        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=quit)
+        self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
         self.button.grid(row=1, column=8)
-        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.printing)
+        self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
         self.button2.grid(row=1, column=9)
 
         self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
@@ -72,11 +79,9 @@ class Program:
 
         self.Label17 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label17.grid(row=5, column=0, columnspan=4, pady=30)
-        self.show_graph()
 
         self.Label18 = Label(self.main, text='Licht intensiteit', fg='black', bg = 'grey')
         self.Label18.grid(row=5, column=4, columnspan=4, pady=30)
-        self.show_graph2()
 
         # self.Label19 = Label(self.main, text='Derde grafiek', fg='black', bg = 'grey')
         # self.Label19.grid(row=5, column=8, columnspan=4, pady=30)
@@ -148,54 +153,45 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
-                self.show_graph()
+                # self.temperatuur_graph()
+                self.licht_graph()
+                self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
+                self.Label15.grid(row=1, column=5, padx=50)
             else:
                self.root.after(10, callback)
         self.root.after(10, callback)
 
 
-    def printing(self):
-        print(self.datainformation)
-        print(self.countx)
-        print(len(self.datainformation))
 
     def temperatuur(self, temp):
         self.Label3 = Label(self.main, text=temp, fg='black', bg='grey')
         self.Label3.grid(row=2, column=2)
-        print("Tempratuur: " + temp)
 
     def licht(self, lux):
         self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
-        print("Lux: " + lux)
 
     def inrollen(self):
-        connectie1.senddata(0xff)
-        status = 1
-        if (status == 1):
-            Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-            Label22.grid(row=4, column=8, columnspan=2)
+        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
+        Label22.grid(row=4, column=8, columnspan=2)
 
     def uitrollen(self):
-        connectie1.senddata(0x0f)
-        status = 0
-        if (status == 0):
-            Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
-            Label22.grid(row=4, column=8, columnspan=2)
+        Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
+        Label22.grid(row=4, column=8, columnspan=2)
 
 
 
-    def show_graph(self):
+    def temperatuur_graph(self):
 
-        s = ser.read()
+        s = temperatuurser.read()
         data = s.hex()
         datainfo = int(data, 16)
-        self.datainformation.append(datainfo)
-        self.countx += 1
-        self.countxlijst.append(self.countx)
+        self.temperatuur_data.append(datainfo)
+        self.countx_temperatuur_lijst.append(self.countx_temperatuur)
+        self.countx_temperatuur += 1
 
-        self.x = self.countxlijst[-20:]
-        self.y = self.datainformation[-20:]
+        self.x = self.countx_temperatuur_lijst[-20:]
+        self.y = self.temperatuur_data[-20:]
 
         figure = Figure(figsize=(4,4), dpi=70)
 
@@ -209,10 +205,17 @@ class Program:
         graph_widget = canvas.get_tk_widget()
         graph_widget.grid(row=6,column=1,columnspan=2, padx=80, sticky='nsew')
 
-    def show_graph2(self):
+    def licht_graph(self):
 
-        self.x = data.listx
-        self.y = data.listy
+        s = lichtser.read()
+        data = s.hex()
+        datainfo = int(data, 16)
+        self.licht_data.append(datainfo)
+        self.countx_licht_lijst.append(self.countx_licht)
+        self.countx_licht += 1
+
+        self.x = self.countx_licht_lijst
+        self.y = self.licht_data
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 
