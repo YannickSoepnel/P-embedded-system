@@ -11,9 +11,9 @@ from test import data
 import threading
 import serial
 
-lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
+# lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
 # temperatuurser = serial.Serial('COM3',19200)
-afstandser = serial.Serial('/dev/tty.usbmodem1421',19200)
+# afstandser = serial.Serial('/dev/tty.usbmodem1421',19200)
 
 
 class Program:
@@ -34,6 +34,13 @@ class Program:
     temperatuur_data = []
     licht_data = []
     afstand_data = []
+    afstand_rolluik = 100
+    laatste_afstand = 90
+    uitrollen_status = 0
+    groen = 0
+    geel = 0
+    rood = 1
+    # laatste_afstand = int(afstand_data[-1:])
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -96,10 +103,13 @@ class Program:
         # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         # self.show_graph5()
 
-        self.button = Button(self.main, text="Klik voor info", command=self.create_window)
+        self.button = Button(self.main, text="afstand 90", command=self.update_value)
         self.button.grid(row=4, column=6)
 
-        self.update = Button(self.main, text="Update", width=10, height=1, command=self.handle_click)
+        self.button10 = Button(self.main, text="afstand 9", command=self.update_value2)
+        self.button10.grid(row=4, column=7)
+
+        self.update = Button(self.main, text="Update", width=10, height=1, command=self.printing)
         self.update.grid(row=3, column=7)
 
 
@@ -154,9 +164,11 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
+                self.afstand_meten_uitrollen()
+                self.afstand_meten_inrollen()
                 # self.temperatuur_graph()
-                self.licht_graph()
-                self.data_afstand()
+                # self.licht_graph()
+                # self.data_afstand()
                 self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
                 self.Label15.grid(row=1, column=5, padx=50)
                 self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
@@ -175,14 +187,67 @@ class Program:
         self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
 
-    def inrollen(self):
-        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+    def uitrollen_arduino(self):
+        # blinking led = 0x0e
+        # rode led aan = 0xff
+        # groene led aan = 0x0f
+        onoff = 0x0f
+        self.uitrollen_status = 1
+        self.geel = 1
+        self.rood = 0
+        #stuur naar arduino dat geel ledje moet knipperen
+        # lampje.write(struct.pack('>B', onoff))
+
+    def inrollen_arduino(self):
+        self.uitrollen_status = 0
+        self.geel = 1
+        self.groen = 0
+
+    def afstand_meten_uitrollen(self):
+        #als de afstand van de afstand sensor overeen komt met de afstand die hij moet uitgerold zijn dan:
+        #
+        if(self.laatste_afstand > self.afstand_rolluik and self.uitrollen_status == 1):
+            self.uitgerold()
+
+    def afstand_meten_inrollen(self):
+        #Als de afstand van de afstandsensor bij minder dan 10?? komt dan moet geel led uit en rood weer aan
+        if(self.laatste_afstand < 10 and self.uitrollen_status == 0):
+            self.ingerold()
+
+    def uitgerold(self):
+        #stuur naar arduino dat geel ledje uit moet en groene aan moet
+        self.geel = 0
+        self.groen = 1
+
+    def ingerold(self):
+        self.geel = 0
+        self.rood = 1
 
     def uitrollen(self):
+        self.uitrollen_arduino()
         Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
         Label22.grid(row=4, column=8, columnspan=2)
 
+    def inrollen(self):
+        self.inrollen_arduino()
+        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
+        Label22.grid(row=4, column=8, columnspan=2)
+
+    def printing(self):
+        print("Geel: ")
+        print(self.geel)
+        print("Groen: ")
+        print(self.groen)
+        print("Rood: ")
+        print(self.rood)
+        print("Status: ")
+        print(self.uitrollen_status)
+
+    def update_value(self):
+        self.laatste_afstand = 110
+
+    def update_value2(self):
+        self.laatste_afstand = 9
 
     def data_afstand(self):
         s = afstandser.read()
