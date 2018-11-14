@@ -11,7 +11,7 @@ from test import data
 import threading
 import serial
 
-ser = serial.Serial('/dev/tty.usbmodem1411',19200)
+ser = serial.Serial('COM3',19200)
 
 class Program:
     style.use('ggplot')
@@ -147,12 +147,6 @@ class Program:
             nonlocal i
             i -= 1
             if not i:
-                s = ser.read()
-                data = s.hex()
-                datainfo = int(data, 16)
-                self.datainformation.append(datainfo)
-                self.countx += 1
-                self.countxlijst.append(self.countx)
                 self.handle_click()
                 self.show_graph()
             else:
@@ -193,8 +187,15 @@ class Program:
 
     def show_graph(self):
 
-        self.x = self.countxlijst
-        self.y = self.datainformation
+        s = ser.read()
+        data = s.hex()
+        datainfo = int(data, 16)
+        self.datainformation.append(datainfo)
+        self.countx += 1
+        self.countxlijst.append(self.countx)
+
+        self.x = self.countxlijst[-20:]
+        self.y = self.datainformation[-20:]
 
         figure = Figure(figsize=(4,4), dpi=70)
 
