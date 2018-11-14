@@ -12,11 +12,64 @@
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
 #define UBBRVAL 51
+#include "distance.h"
 
-uint8_t data;
+uint8_t analog;
+volatile uint16_t gv_counter = 0; // 16 bit counter value
+volatile uint8_t gv_echo = 0; // a flag
+
 double temp;
 double voltage;
 double tempC;
+
+void init_ports(void)
+{
+	DDRB |=  0xFF;
+	DDRD &=~ (1 << PIND3);
+	DDRD |= (1 << PIND2);
+	DDRC = 0x00;
+
+}
+
+void init_timer(void)
+// prescaling : max time = 2^16/16E6 = 4.1 ms, 4.1 >> 2.3, so no prescaling required
+// normal mode, no prescale, stop timer
+{
+	TCCR1A = 0;
+	TCCR1B = 0;
+	TIMSK1 |= _BV(TOIE1);
+}
+
+void start_timer(void)
+{
+	TCNT1 = 0;
+	gv_counter = 0;
+	TCCR1B |= _BV(CS10);
+}
+
+void init_ext_int(void)
+{
+	// any change triggers ext interrupt 1
+	EICRA = (1 << ISC10);
+	EIMSK = (1 << INT1);
+}
+
+void send_trigger(void)
+{
+	_delay_ms(50);		//Restart HC-SR04
+	PORTD &=~ (1 << PIND2);
+	_delay_us(1);
+	PORTD |= (1 << PIND2); //Send 10us second pulse
+	_delay_us(10);
+	PORTD &=~ (1 << PIND2);
+}
+
+
+uint16_t calc_cm(uint16_t counter)
+{
+	uint16_t result = (counter * 65536 + TCNT1) / (58 * 16);
+	return result;
+}
 void uart_init()
 {
 	// set the baud rate
@@ -60,20 +113,40 @@ uint8_t readlight()
 	return value;
 }
 
+ISR (INT1_vect)
+{
+	gv_echo = (~gv_echo) & 1;
+	if (gv_echo){
+		start_timer();
+		} else {
+		init_timer();
+		
+	}
+}
+
+ISR (TIMER1_OVF_vect)
+{
+	gv_counter++;
+}
 int main(void)
 {
-	DDRC = 0x00;
     uart_init();
 	init_adc();
+	init_ports();
+	init_ext_int();
+	init_timer();
+	sei();
     while (1) 
     {
+		send_trigger();
 		_delay_ms(300);
-		data = get_adc_value();
-		voltage = data * 0.004882814 * 5000;
+		uint16_t distance = calc_cm(gv_counter);
+		analog = get_adc_value();
+		voltage = analog * 0.004882814 * 5000;
 		tempC = (voltage - 500) * 0.1;
-		
 		transmit(tempC);
-			
+		_delay_ms(10);
+		transmit(distance);
     }
 }
 
