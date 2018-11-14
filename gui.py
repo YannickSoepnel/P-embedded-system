@@ -168,6 +168,7 @@ class Program:
             else:
                self.root.after(50, callback)
         self.root.after(50, callback)
+        
 
     def updatelabels(self):
         self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
