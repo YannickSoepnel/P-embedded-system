@@ -144,9 +144,9 @@ int main(void)
 		analog = get_adc_value();
 		voltage = analog * 0.004882814 * 5000;
 		tempC = (voltage - 500) * 0.1;
-		transmit(tempC);
-		_delay_ms(10);
 		transmit(distance);
+		_delay_ms(10);
+		transmit(tempC);
     }
 }
 
