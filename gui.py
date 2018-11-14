@@ -10,11 +10,12 @@ from test import data
 #from connection import connectie1
 import threading
 import serial
+import struct
 
 # lichtser = serial.Serial('COM5',19200)
 # # temperatuurser = serial.Serial('COM3',19200)
 # afstandser = serial.Serial('COM3',19200)
-
+ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
 
 class Program:
     style.use('ggplot')
@@ -39,7 +40,7 @@ class Program:
     uitrollen_status = 0
     groen = 0
     geel = 0
-    rood = 1
+    rood = 0xff
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -48,6 +49,7 @@ class Program:
 
         #connectie1.recieve_data()
         self.handle_click()
+        ser.write(struct.pack('>B', self.rood))
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -102,8 +104,14 @@ class Program:
         # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         # self.show_graph5()
 
-        self.button = Button(self.main, text="Klik voor info", command=self.create_window)
+        self.button = Button(self.main, text="Update 110", command=self.update_value)
         self.button.grid(row=4, column=6)
+
+        self.button10 = Button(self.main, text="Update 9", command=self.update_value2)
+        self.button10.grid(row=5, column=6)
+
+        self.button11 = Button(self.main, text="Status", command=self.printing)
+        self.button11.grid(row=6, column=6)
 
         self.afstand1 = Label(self.main, text='Afstand: ', fg='black', bg='grey')
         self.afstand1.grid(row=1, column=5, columnspan=2)
@@ -190,15 +198,19 @@ class Program:
         # groene led aan = 0x0f
         onoff = 0x0f
         self.uitrollen_status = 1
-        self.geel = 1
-        self.rood = 0
+        self.geel = 1 #0x0e
+        self.geel = 0x0e
+        ser.write(struct.pack('>B', self.geel))
+        self.rood = 0 #0xff
         #stuur naar arduino dat geel ledje moet knipperen
         # lampje.write(struct.pack('>B', onoff))
 
     def inrollen_arduino(self):
         self.uitrollen_status = 0
-        self.geel = 1
-        self.groen = 0
+        self.geel = 1 #0x0e
+        self.geel = 0x0e
+        ser.write(struct.pack('>B', self.geel))
+        self.groen = 0 #0x0f
 
     def afstand_meten_uitrollen(self):
         #als de afstand van de afstand sensor overeen komt met de afstand die hij moet uitgerold zijn dan:
@@ -213,12 +225,16 @@ class Program:
 
     def uitgerold(self):
         #stuur naar arduino dat geel ledje uit moet en groene aan moet
-        self.geel = 0
-        self.groen = 1
+        self.geel = 0 #0x0e
+        self.groen = 1 #0x0f
+        self.groen = 0x0f
+        ser.write(struct.pack('>B', self.groen))
 
     def ingerold(self):
-        self.geel = 0
-        self.rood = 1
+        self.geel = 0 #0x0e
+        self.rood = 1 #0xff
+        self.rood = 0xff
+        ser.write(struct.pack('>B', self.rood))
 
     def uitrollen(self):
         self.uitrollen_arduino()
