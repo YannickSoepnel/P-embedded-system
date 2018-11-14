@@ -136,15 +136,15 @@ int main(void)
     while (1) 
     {
 		send_trigger();
-		_delay_ms(50);
+		_delay_ms(500);
 		uint16_t distance = calc_cm(gv_counter);
 		analog = get_adc_value();
 		transmit(0xff);
-		_delay_ms(50);
+		//_delay_ms(50);
 		transmit(distance);
-		_delay_ms(50);
+		//_delay_ms(50);
 		transmit(0x0f);
-		_delay_ms(50);
+		//_delay_ms(50);
 		transmit(analog);
 			
     }

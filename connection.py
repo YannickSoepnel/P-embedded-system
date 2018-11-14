@@ -4,7 +4,7 @@ import struct
 import test
 import threading
 
-ser = serial.Serial('COM6',19200)  	# open de connectie
+ser = serial.Serial('COM7',19200)  	# open de connectie
 print(ser)							# print de data van de
 
 
@@ -60,30 +60,16 @@ class Connectie:
 		self.print_values()
 
 	def main(self):
-
-
-		"""""
-		#	userInput = input('send? Press 1!, recieve? Press 2!') 	# vraag de gebruiker of hij data wil
-		#	if userInput == '2':				# kijk of de input '2' is
-		#		for i in range(0, self.numPoints):		# doorloop de lijst
-		#			data = self.get_values().hex() 		# zet de data van de poort in een variabele
-		#			data = self.hex_to_int(data)		# zet de hexadecimale data om in een integer
-		#			self.dataList[i] = data 			# zet de data in de lijst
-		#		self.list1.append((count, self.dataList[1]))
-		#		self.list2.append((count, self.dataList[2]))
-		#		count = count + 1
-		#		self.print_values()
-		#	if userInput == '1':				# kijk of de input '1' is
-		#	#if sendData == 1:
-		#		#onoff = sendValues(status)
-		#		#ser.write(struct.pack('>B., onoff))
-		#		self.onoff = self.send_values(self.onoff)		# verander de waarde van onoff
-		#		print(self.onoff)
-		#		ser.write(struct.pack('>B', self.onoff))	#v erzend de waarde onoff
-		#	if userInput == 'close':			# kijk of de input 'close' is
-		#		ser.close()						# sluit de connectie
-		"""
-
+		
+		if senddata == 1:
+			onoff = send_values(status)
+			ser.write(struct.pack('>B.', onoff))
+		self.onoff = self.send_values(self.onoff)		# verander de waarde van onoff
+		print(self.onoff)
+		ser.write(struct.pack('>B', self.onoff))	#v erzend de waarde onoff
+		if userInput == 'close':			# kijk of de input 'close' is
+			ser.close()						# sluit de connectie
+		
 
 
 connectie1 = Connectie()		# Maak de connectie aan

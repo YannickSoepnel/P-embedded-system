@@ -50,14 +50,14 @@ void led(uint8_t onoff){
 	int b;
 	onoff;
     
-    while(onoff == 0x0e){
+    if(onoff == 0x0e){
             PORTB = 0x02;
             _delay_ms(500);
             PORTB = 0x00;
             _delay_ms(500); 
     }
 
-    if(onoff == 0xff){                   //rode led gaat aan (hij is ingerold dus)
+    else if(onoff == 0xff){                   //rode led gaat aan (hij is ingerold dus)
         PORTB = 0x01;
     }
     else if(onoff == 0x0f){               //Groene led gaat aan (hij is uitgerold dus)

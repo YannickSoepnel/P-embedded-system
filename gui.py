@@ -6,16 +6,13 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
-from test import data
-#from connection import connectie1
-import threading
 import serial
 import struct
 
-# lichtser = serial.Serial('COM5',19200)
-# # temperatuurser = serial.Serial('COM3',19200)
+lichtser = serial.Serial('COM6',19200)
+temperatuurser = serial.Serial('COM10',19200)
 # afstandser = serial.Serial('COM3',19200)
-ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
+# ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
 
 class Program:
     style.use('ggplot')
@@ -49,7 +46,7 @@ class Program:
 
         #connectie1.recieve_data()
         self.handle_click()
-        ser.write(struct.pack('>B', self.rood))
+        lichtser.write(struct.pack('>B', self.rood))
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -91,18 +88,6 @@ class Program:
 
         self.Label18 = Label(self.main, text='Licht intensiteit', fg='black', bg = 'grey')
         self.Label18.grid(row=5, column=4, columnspan=4, pady=30)
-
-        # self.Label19 = Label(self.main, text='Derde grafiek', fg='black', bg = 'grey')
-        # self.Label19.grid(row=5, column=8, columnspan=4, pady=30)
-        # self.show_graph3()
-        #
-        # self.Label20 = Label(self.main, text='Vierde grafiek', fg='black', bg = 'grey')
-        # self.Label20.grid(row=7, column=0, columnspan=4, pady=30)
-        # self.show_graph4()
-        #
-        # self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
-        # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
-        # self.show_graph5()
 
         self.button = Button(self.main, text="Update 110", command=self.update_value)
         self.button.grid(row=4, column=6)
@@ -167,16 +152,42 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
+                self.update_data()
                 self.afstand_meten_uitrollen()
                 self.afstand_meten_inrollen()
-                # self.temperatuur_graph()
-                # self.licht_graph()
-                # self.data_afstand()
+                self.temperatuur_graph()
+                self.licht_graph()
+                #self.data_afstand()
                 self.updatelabels()
             else:
                self.root.after(50, callback)
         self.root.after(50, callback)
-        
+
+    def update_data(self):
+        data = self.recieve_data_licht()
+        if data == 0xff:
+            data = self.recieve_data_licht()
+            self.afstand_data.append(data)
+        data = self.recieve_data_licht()
+        if data == 0x0f:
+            data = self.recieve_data_licht()
+            self.licht_data.append(data)
+        data = self.recieve_data_temp()
+        self.temperatuur_data.append(data)
+
+    def recieve_data_licht(self):
+
+        data = lichtser.read().hex()  # zet de data van de poort in een variabele
+        data = int(data, 16)  # zet de hexadecimale data om in een integer
+        return data
+
+
+    def recieve_data_temp(self):
+
+        data = temperatuurser.read().hex()  # zet de data van de poort in een variabele
+        data = int(data, 16)  # zet de hexadecimale data om in een integer
+        return data
+
 
     def updatelabels(self):
         self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
@@ -201,7 +212,7 @@ class Program:
         self.uitrollen_status = 1
         self.geel = 1 #0x0e
         self.geel = 0x0e
-        ser.write(struct.pack('>B', self.geel))
+        temperatuurser.write(struct.pack('>B', self.geel))
         self.rood = 0 #0xff
         #stuur naar arduino dat geel ledje moet knipperen
         # lampje.write(struct.pack('>B', onoff))
@@ -210,7 +221,7 @@ class Program:
         self.uitrollen_status = 0
         self.geel = 1 #0x0e
         self.geel = 0x0e
-        ser.write(struct.pack('>B', self.geel))
+        temperatuurser.write(struct.pack('>B', self.geel))
         self.groen = 0 #0x0f
 
     def afstand_meten_uitrollen(self):
@@ -229,13 +240,13 @@ class Program:
         self.geel = 0 #0x0e
         self.groen = 1 #0x0f
         self.groen = 0x0f
-        ser.write(struct.pack('>B', self.groen))
+        temperatuurser.write(struct.pack('>B', self.groen))
 
     def ingerold(self):
         self.geel = 0 #0x0e
         self.rood = 1 #0xff
         self.rood = 0xff
-        ser.write(struct.pack('>B', self.rood))
+        temperatuurser.write(struct.pack('>B', self.rood))
 
     def uitrollen(self):
         self.uitrollen_arduino()
@@ -263,19 +274,14 @@ class Program:
     def update_value2(self):
         self.laatste_afstand = 9
 
-    def data_afstand(self):
-        s = afstandser.read()
-        data = s.hex()
-        datainfo = int(data, 16)
-        self.afstand_data.append(datainfo)
-
+    #def data_afstand(self):
+    #   s = afstandser.read()
+    #    data = s.hex()
+    #   datainfo = int(data, 16)
+    #   self.afstand_data.append(datainfo)
 
     def temperatuur_graph(self):
 
-        s = afstandser.read()
-        data = s.hex()
-        datainfo = int(data, 16)
-        self.temperatuur_data.append(datainfo)
         self.countx_temperatuur_lijst.append(self.countx_temperatuur)
         self.countx_temperatuur += 1
 
@@ -296,10 +302,7 @@ class Program:
 
     def licht_graph(self):
 
-        s = lichtser.read()
-        data = s.hex()
-        datainfo = int(data, 16)
-        self.licht_data.append(datainfo)
+
         self.countx_licht_lijst.append(self.countx_licht)
         self.countx_licht += 1
 
@@ -318,56 +321,6 @@ class Program:
         graph_widget1 = canvas1.get_tk_widget()
         graph_widget1.grid(row=6, column=4, columnspan=2,sticky='nsew', padx=80)
 
-    def show_graph3(self):
-
-        self.x = self.countxlijst
-        self.y = self.datainformation
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=6, column=8, columnspan=2,sticky='nsew', padx=80)
-
-    def show_graph4(self):
-
-        self.x = data.listx
-        self.y = data.listy
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=8, column=1, columnspan=2,sticky='nsew', padx=80)
-
-    def show_graph5(self):
-
-        self.x = data.listx
-        self.y = data.listy
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=8, column=4, columnspan=2,sticky='nsew', padx=80)
 
 
 program = Program()
