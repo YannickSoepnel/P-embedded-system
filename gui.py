@@ -148,6 +148,7 @@ class Program:
             nonlocal i
             i -= 1
             if not i:
+                # Hier staan alle functies die telkens uitgevoerd moeten worden
                 self.handle_click()
                 self.update_data()
                 #self.afstand_meten_uitrollen()
