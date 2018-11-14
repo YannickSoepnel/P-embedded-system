@@ -10,8 +10,8 @@ import serial
 import struct
 
 
-#lichtser = serial.Serial('COM6',19200)
-temperatuurser = serial.Serial('COM10', 19200)
+#lichtser = serial.Serial('COM6',19200)             # Open connectie op COM6
+temperatuurser = serial.Serial('COM10', 19200)      # Open connectie op COM10
 # afstandser = serial.Serial('COM3',19200)
 # ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
 
@@ -40,7 +40,6 @@ class Program:
     rood = 0xff
     lichtgrens = 130
     tempgrens = 30
-    forced = 0
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -163,38 +162,40 @@ class Program:
         self.root.after(50, callback)
 
     def check_licht(self):
-        laatste_licht = self.licht_data[-1]
+        laatste_licht = self.licht_data[-1]     # Zet de laatste waargenomen lichtintensiteit in een variabele
         if int(laatste_licht) > int(self.lichtgrens) and self.uitrollen_status == 0:
+            # Kijk of die waarde boven de grens van lichtintensiteit ligt
+            # Als dit zo is, rol je de zonneluik uit
             self.uitrollen_arduino()
             self.uitgerold()
 
 
 
     def update_data(self):
-        data = self.recieve_data_licht()
-        if data == 0xff:
-            data = self.recieve_data_licht()
-            self.afstand_data.append(data)
-        data = self.recieve_data_licht()
-        if data == 0x0f:
-            data = self.recieve_data_licht()
-            self.licht_data.append(data)
+        #data = self.recieve_data_licht()       # Zet seriële waarde in data
+        #if data == 0xff:                       # Check of de data 0xff is
+        #    data = self.recieve_data_licht()   # Zet seriële waarde na de 0xff in data
+        #    self.afstand_data.append(data)     # Voeg data toe in de afstand lijst
+        #data = self.recieve_data_licht()
+        #if data == 0x0f:                       # Check of de data 0x0f is
+        #    data = self.recieve_data_licht()   # Zet seriële waarde na de 0x0f in data
+        #    self.licht_data.append(data)       # Voeg data toe in de lichtintensiteit lijst
         data = self.recieve_data_temp()
-        if data == 0xff:
-            data = self.recieve_data_temp()
-            data = data / 10
-            self.temperatuur_data.append(data)
+        if data == 0xff:                        # Kijk of de data 0xff is
+            data = self.recieve_data_temp()     # Zet seriële waarde na 0xff in data
+            data = data / 10                    # Deel de data door 10 omdat hij vanuit de arduino met 10 is vermenigvuldigd
+            self.temperatuur_data.append(data)  # Voeg de data toe in de temperatuur lijst
 
     def recieve_data_licht(self):
-        data = lichtser.read().hex()  # zet de data van de poort in een variabele
-        data = int(data, 16)  # zet de hexadecimale data om in een integer
+        data = lichtser.read().hex()    # zet de data van de poort in een variabele
+        data = int(data, 16)            # zet de hexadecimale data om in een integer
         return data
 
 
     def recieve_data_temp(self):
 
         data = temperatuurser.read().hex()  # zet de data van de poort in een variabele
-        data = int(data, 16)  # zet de hexadecimale data om in een integer
+        data = int(data, 16)                # zet de hexadecimale data om in een integer
         return data
 
 
@@ -313,7 +314,6 @@ class Program:
         graph_widget.grid(row=6,column=1,columnspan=2, padx=80, sticky='nsew')
 
     def licht_graph(self):
-
 
         self.countx_licht_lijst.append(self.countx_licht)
         self.countx_licht += 1
