@@ -11,7 +11,10 @@ from test import data
 import threading
 import serial
 
-ser = serial.Serial('COM3',19200)
+lichtser = serial.Serial('COM3',19200)
+temperatuurser = serial.Serial('COM3',19200)
+afstandser = serial.Serial('COM3',19200)
+
 
 class Program:
     style.use('ggplot')
