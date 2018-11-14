@@ -13,7 +13,7 @@ import serial
 
 lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
 # temperatuurser = serial.Serial('COM3',19200)
-# afstandser = serial.Serial('COM3',19200)
+afstandser = serial.Serial('/dev/tty.usbmodem1421',19200)
 
 
 class Program:
@@ -33,6 +33,7 @@ class Program:
     countx_licht_lijst = []
     temperatuur_data = []
     licht_data = []
+    afstand_data = []
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -155,11 +156,14 @@ class Program:
                 self.handle_click()
                 # self.temperatuur_graph()
                 self.licht_graph()
+                self.data_afstand()
                 self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
                 self.Label15.grid(row=1, column=5, padx=50)
+                self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
+                self.afstand.grid(row=1, column=6, padx=50)
             else:
-               self.root.after(10, callback)
-        self.root.after(10, callback)
+               self.root.after(50, callback)
+        self.root.after(50, callback)
 
 
 
@@ -180,10 +184,16 @@ class Program:
         Label22.grid(row=4, column=8, columnspan=2)
 
 
+    def data_afstand(self):
+        s = afstandser.read()
+        data = s.hex()
+        datainfo = int(data, 16)
+        self.afstand_data.append(datainfo)
+
 
     def temperatuur_graph(self):
 
-        s = temperatuurser.read()
+        s = afstandser.read()
         data = s.hex()
         datainfo = int(data, 16)
         self.temperatuur_data.append(datainfo)
