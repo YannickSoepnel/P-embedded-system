@@ -45,23 +45,22 @@ void insertOutput(int count)
 	temperature = count + 2;	
 }
 
-void led(uint8_tonoff){
+void led(uint8_t onoff){
     int a;
+	int b;
+	onoff;
     
-    if(onoff = 0x0e){
-        for (a = 0; a < 10; a = a + 1)
-        {
+    while(onoff == 0x0e){
             PORTB = 0x02;
-            _delay_ms(100);
+            _delay_ms(500);
             PORTB = 0x00;
-            _delay_ms(100);
-        }
+            _delay_ms(500); 
     }
 
-    if(onoff = 0xff){                   //rode led gaat aan (hij is ingerold dus)
+    if(onoff == 0xff){                   //rode led gaat aan (hij is ingerold dus)
         PORTB = 0x01;
     }
-    else if(onoff = 0x0f{               //Groene led gaat aan (hij is uitgerold dus)
+    else if(onoff == 0x0f){               //Groene led gaat aan (hij is uitgerold dus)
         PORTB = 0x04;
     }
 }
@@ -88,6 +87,7 @@ int main(void)
 	uart_init();
 	DDRB = 0xff;
 	_delay_ms(1000);
+	int onoff;
 	while (1) {
 		
 		if(UDR0 != 0x00){

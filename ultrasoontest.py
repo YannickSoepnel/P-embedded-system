@@ -27,17 +27,22 @@ class Connectie:
 
 	def main(self):
 		count = 0
+		afstand = []
+		licht = []
 		while True:
 			#count = count + 1
 			data = self.recieve_data()
-			#print("X")
-			#print(count)
-			#print("Y")
-			print(data)
-			time.sleep(0.01)
+			if data == 0xff:
+				data = self.recieve_data()
+				afstand.append(data)
 			data = self.recieve_data()
-			print(data)
-			time.sleep(0.3)
+			if data == 0x0f:
+				data = self.recieve_data()
+				licht.append(data)
+			time.sleep(0.05)
+			print(afstand)
+			print(licht)
+
 
 
 
