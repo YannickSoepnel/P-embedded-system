@@ -45,23 +45,26 @@ void insertOutput(int count)
 	temperature = count + 2;	
 }
 
-void led(uint8_t onoff){
-	int a;
-	for(a = 0; a <10; a = a + 1){
-		PORTB = 0x02;
-		_delay_ms(100);
-		PORTB = 0x00;
-		_delay_ms(100);
-	}
-	
-	if(onoff == 0x0f){		// check if a 0 is send
-		PORTB = 0x01;		// turn led off
-	}
-	else{
-		PORTB = 0x04;		// turn led on
-	}	
-}
+void led(uint8_tonoff){
+    int a;
+    
+    if(onoff = 0x0e){
+        for (a = 0; a < 10; a = a + 1)
+        {
+            PORTB = 0x02;
+            _delay_ms(100);
+            PORTB = 0x00;
+            _delay_ms(100);
+        }
+    }
 
+    if(onoff = 0xff){                   //rode led gaat aan (hij is ingerold dus)
+        PORTB = 0x01;
+    }
+    else if(onoff = 0x0f{               //Groene led gaat aan (hij is uitgerold dus)
+        PORTB = 0x04;
+    }
+}
 
 void recieving()
 {
