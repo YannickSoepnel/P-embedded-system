@@ -11,9 +11,9 @@ from test import data
 import threading
 import serial
 
-# lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
+lichtser = serial.Serial('COM5',19200)
 # temperatuurser = serial.Serial('COM3',19200)
-# afstandser = serial.Serial('/dev/tty.usbmodem1421',19200)
+afstandser = serial.Serial('COM3',19200)
 
 
 class Program:
@@ -34,13 +34,6 @@ class Program:
     temperatuur_data = []
     licht_data = []
     afstand_data = []
-    afstand_rolluik = 100
-    laatste_afstand = 90
-    uitrollen_status = 0
-    groen = 0
-    geel = 0
-    rood = 1
-    # laatste_afstand = int(afstand_data[-1:])
 
     temperatuur_last = temperatuur_data[-1:]
     licht_last = licht_data[-1:]
@@ -70,19 +63,19 @@ class Program:
         self.Label12.grid(row=1, column=3, columnspan=2, padx=50)
         self.Label14 = Label(self.main, text='Grens licht intensiteit: ', fg='black', bg='grey')
         self.Label14.grid(row=2, column=3, columnspan=2)
-        self.licht = Scale(self.main, orient='horizontal', from_=50, to=300, length=200, command=self.licht)
-        self.licht.set(230)
+        self.licht = Scale(self.main, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
+        self.licht.set(130)
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
-        self.Label16.grid(row=0, column=8, columnspan=2)
+        self.Label16.grid(row=5, column=6, columnspan=2)
         self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
-        self.button.grid(row=1, column=8)
+        self.button.grid(row=4, column=7)
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
-        self.button2.grid(row=1, column=9)
+        self.button2.grid(row=4, column=8)
 
         self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
-        self.quitButton.grid(row=1, column=10)
+        self.quitButton.grid(row=1, column=8)
 
 
         self.Label17 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
@@ -103,15 +96,11 @@ class Program:
         # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
         # self.show_graph5()
 
-        self.button = Button(self.main, text="afstand 90", command=self.update_value)
+        self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
 
-        self.button10 = Button(self.main, text="afstand 9", command=self.update_value2)
-        self.button10.grid(row=4, column=7)
-
-        self.update = Button(self.main, text="Update", width=10, height=1, command=self.printing)
-        self.update.grid(row=3, column=7)
-
+        self.afstand1 = Label(self.main, text='Afstand: ', fg='black', bg='grey')
+        self.afstand1.grid(row=1, column=5, columnspan=2)
 
     def create_window(self):
         top = Toplevel(bg='grey')
@@ -120,37 +109,37 @@ class Program:
 
         Label1 = Label(top, text='Zonlicht:', bg='grey')
         Label1.grid(row=2, column=1)
-        label11 = Label(top, text='100 000 - 130 000 lux', bg='grey')
+        label11 = Label(top, text='165', bg='grey')
         label11.grid(row=2, column=2)
 
         Label2 = Label(top, text='Daglicht, indirect zonlicht:', bg='grey')
         Label2.grid(row=3, column=1)
-        Label22 = Label(top, text='10 000 - 20 000 lux', bg='grey')
+        Label22 = Label(top, text='150', bg='grey')
         Label22.grid(row=3, column=2)
 
         Label3 = Label(top, text='Bewolkte dag:', bg='grey')
         Label3.grid(row=4, column=1)
-        Label33 = Label(top, text='1000 lux', bg='grey')
+        Label33 = Label(top, text='140', bg='grey')
         Label33.grid(row=4, column=2)
 
         Label4 = Label(top, text='Kantoor:', bg='grey')
         Label4.grid(row=5, column=1)
-        Label44 = Label(top, text='500 lux', bg='grey')
+        Label44 = Label(top, text='120', bg='grey')
         Label44.grid(row=5, column=2)
 
         Label5 = Label(top, text='Erg donkere dag: ', bg='grey')
         Label5.grid(row=6, column=1)
-        Label55 = Label(top, text='100 lux', bg='grey')
+        Label55 = Label(top, text='100', bg='grey')
         Label55.grid(row=6, column=2)
 
         Label6 = Label(top, text='Schemering:', bg='grey')
         Label6.grid(row=7, column=1)
-        Label66 = Label(top, text='10 lux', bg='grey')
+        Label66 = Label(top, text='80', bg='grey')
         Label66.grid(row=7, column=2)
 
         Label7 = Label(top, text='Donkere schemering:', bg='grey')
         Label7.grid(row=8, column=1)
-        Label77 = Label(top, text='1 lux', bg='grey')
+        Label77 = Label(top, text='40', bg='grey')
         Label77.grid(row=8, column=2)
 
         button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
@@ -164,11 +153,9 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
-                self.afstand_meten_uitrollen()
-                self.afstand_meten_inrollen()
-                # self.temperatuur_graph()
-                # self.licht_graph()
-                # self.data_afstand()
+                self.temperatuur_graph()
+                self.licht_graph()
+                self.data_afstand()
                 self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
                 self.Label15.grid(row=1, column=5, padx=50)
                 self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
@@ -187,67 +174,14 @@ class Program:
         self.Label13 = Label(self.main, text=lux, fg='black', bg='grey')
         self.Label13.grid(row=2, column=5)
 
-    def uitrollen_arduino(self):
-        # blinking led = 0x0e
-        # rode led aan = 0xff
-        # groene led aan = 0x0f
-        onoff = 0x0f
-        self.uitrollen_status = 1
-        self.geel = 1
-        self.rood = 0
-        #stuur naar arduino dat geel ledje moet knipperen
-        # lampje.write(struct.pack('>B', onoff))
-
-    def inrollen_arduino(self):
-        self.uitrollen_status = 0
-        self.geel = 1
-        self.groen = 0
-
-    def afstand_meten_uitrollen(self):
-        #als de afstand van de afstand sensor overeen komt met de afstand die hij moet uitgerold zijn dan:
-        #
-        if(self.laatste_afstand > self.afstand_rolluik and self.uitrollen_status == 1):
-            self.uitgerold()
-
-    def afstand_meten_inrollen(self):
-        #Als de afstand van de afstandsensor bij minder dan 10?? komt dan moet geel led uit en rood weer aan
-        if(self.laatste_afstand < 10 and self.uitrollen_status == 0):
-            self.ingerold()
-
-    def uitgerold(self):
-        #stuur naar arduino dat geel ledje uit moet en groene aan moet
-        self.geel = 0
-        self.groen = 1
-
-    def ingerold(self):
-        self.geel = 0
-        self.rood = 1
+    def inrollen(self):
+        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
+        Label22.grid(row=5, column=8, columnspan=2)
 
     def uitrollen(self):
-        self.uitrollen_arduino()
         Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+        Label22.grid(row=5, column=8, columnspan=2)
 
-    def inrollen(self):
-        self.inrollen_arduino()
-        Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
-
-    def printing(self):
-        print("Geel: ")
-        print(self.geel)
-        print("Groen: ")
-        print(self.groen)
-        print("Rood: ")
-        print(self.rood)
-        print("Status: ")
-        print(self.uitrollen_status)
-
-    def update_value(self):
-        self.laatste_afstand = 110
-
-    def update_value2(self):
-        self.laatste_afstand = 9
 
     def data_afstand(self):
         s = afstandser.read()
@@ -289,8 +223,8 @@ class Program:
         self.countx_licht_lijst.append(self.countx_licht)
         self.countx_licht += 1
 
-        self.x = self.countx_licht_lijst
-        self.y = self.licht_data
+        self.x = self.countx_licht_lijst[-10:]
+        self.y = self.licht_data[-10:]
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 
