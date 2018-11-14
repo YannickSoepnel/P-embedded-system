@@ -8,10 +8,11 @@ import matplotlib.animation as animation
 from matplotlib import style
 import serial
 import struct
+from test import data
 
-lichtser = serial.Serial('COM6',19200)
-temperatuurser = serial.Serial('COM10',19200)
-# afstandser = serial.Serial('COM3',19200)
+# lichtser = serial.Serial('COM6',19200)
+# temperatuurser = serial.Serial('COM10',19200)
+# # afstandser = serial.Serial('COM3',19200)
 # ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
 
 class Program:
@@ -46,7 +47,7 @@ class Program:
 
         #connectie1.recieve_data()
         self.handle_click()
-        lichtser.write(struct.pack('>B', self.rood))
+        # lichtser.write(struct.pack('>B', self.rood))
 
         self.Label1 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
         self.Label1.grid(row=0, column=0, columnspan=4)
@@ -89,14 +90,9 @@ class Program:
         self.Label18 = Label(self.main, text='Licht intensiteit', fg='black', bg = 'grey')
         self.Label18.grid(row=5, column=4, columnspan=4, pady=30)
 
-        self.button = Button(self.main, text="Update 110", command=self.update_value)
-        self.button.grid(row=4, column=6)
+        self.create_window = Button(self.main, text="Licht info", command=self.create_window)
+        self.create_window.grid(row=4, column=6)
 
-        self.button10 = Button(self.main, text="Update 9", command=self.update_value2)
-        self.button10.grid(row=5, column=6)
-
-        self.button11 = Button(self.main, text="Status", command=self.printing)
-        self.button11.grid(row=6, column=6)
 
         self.afstand1 = Label(self.main, text='Afstand: ', fg='black', bg='grey')
         self.afstand1.grid(row=1, column=5, columnspan=2)
@@ -152,7 +148,7 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
-                self.update_data()
+                # self.update_data()
                 self.afstand_meten_uitrollen()
                 self.afstand_meten_inrollen()
                 self.temperatuur_graph()
@@ -194,6 +190,8 @@ class Program:
         self.Label15.grid(row=1, column=5, padx=50)
         self.afstand = Label(self.main, text=self.afstand_data[-1:], fg='black', bg='grey')
         self.afstand.grid(row=1, column=6, padx=50)
+        self.temperatuur = Label(self.main, text=self.temperatuur_data[-1:], fg='black', bg='grey')
+        self.temperatuur.grid(row=1, column=2, padx=50)
 
 
     def temperatuur(self, temp):
@@ -283,11 +281,14 @@ class Program:
 
     def temperatuur_graph(self):
 
-        self.countx_temperatuur_lijst.append(self.countx_temperatuur)
-        self.countx_temperatuur += 1
+        # self.countx_temperatuur_lijst.append(self.countx_temperatuur)
+        # self.countx_temperatuur += 1
+        #
+        # self.x = self.countx_temperatuur_lijst[-20:]
+        # self.y = self.temperatuur_data[-20:]
 
-        self.x = self.countx_temperatuur_lijst[-20:]
-        self.y = self.temperatuur_data[-20:]
+        self.x = data.listx
+        self.y = data.listy
 
         figure = Figure(figsize=(4,4), dpi=70)
 
@@ -304,11 +305,14 @@ class Program:
     def licht_graph(self):
 
 
-        self.countx_licht_lijst.append(self.countx_licht)
-        self.countx_licht += 1
+        # self.countx_licht_lijst.append(self.countx_licht)
+        # self.countx_licht += 1
+        #
+        # self.x = self.countx_licht_lijst[-10:]
+        # self.y = self.licht_data[-10:]
 
-        self.x = self.countx_licht_lijst[-10:]
-        self.y = self.licht_data[-10:]
+        self.x = data.listx
+        self.y = data.listy
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 
