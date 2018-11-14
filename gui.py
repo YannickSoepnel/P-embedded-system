@@ -11,9 +11,9 @@ from test import data
 import threading
 import serial
 
-lichtser = serial.Serial('/dev/tty.usbmodem1411',19200)
+lichtser = serial.Serial('COM5',19200)
 # temperatuurser = serial.Serial('COM3',19200)
-afstandser = serial.Serial('/dev/tty.usbmodem1421',19200)
+afstandser = serial.Serial('COM3',19200)
 
 
 class Program:
@@ -68,14 +68,14 @@ class Program:
         self.licht.grid(row=4, column=4, columnspan=2)
 
         self.Label16 = Label(self.main, text='Status', fg='black', bg='grey')
-        self.Label16.grid(row=0, column=8, columnspan=2)
+        self.Label16.grid(row=5, column=6, columnspan=2)
         self.button = Button(self.main, width=10, height=2, text="Uitrollen", fg="black", command=self.uitrollen)
-        self.button.grid(row=1, column=8)
+        self.button.grid(row=4, column=7)
         self.button2 = Button(self.main, width=10, height=2, text="Inrollen", fg="black", command=self.inrollen)
-        self.button2.grid(row=1, column=9)
+        self.button2.grid(row=4, column=8)
 
         self.quitButton = Button(self.main, text='Quit App', width=10, height=2, command=quit)
-        self.quitButton.grid(row=1, column=10)
+        self.quitButton.grid(row=1, column=8)
 
 
         self.Label17 = Label(self.main, text='Temperatuur', fg='black', bg = 'grey')
@@ -99,9 +99,8 @@ class Program:
         self.button = Button(self.main, text="Klik voor info", command=self.create_window)
         self.button.grid(row=4, column=6)
 
-        self.update = Button(self.main, text="Update", width=10, height=1, command=self.handle_click)
-        self.update.grid(row=3, column=7)
-
+        self.afstand1 = Label(self.main, text='Afstand: ', fg='black', bg='grey')
+        self.afstand1.grid(row=1, column=5, columnspan=2)
 
     def create_window(self):
         top = Toplevel(bg='grey')
@@ -110,37 +109,37 @@ class Program:
 
         Label1 = Label(top, text='Zonlicht:', bg='grey')
         Label1.grid(row=2, column=1)
-        label11 = Label(top, text='100 000 - 130 000 lux', bg='grey')
+        label11 = Label(top, text='250', bg='grey')
         label11.grid(row=2, column=2)
 
         Label2 = Label(top, text='Daglicht, indirect zonlicht:', bg='grey')
         Label2.grid(row=3, column=1)
-        Label22 = Label(top, text='10 000 - 20 000 lux', bg='grey')
+        Label22 = Label(top, text='240', bg='grey')
         Label22.grid(row=3, column=2)
 
         Label3 = Label(top, text='Bewolkte dag:', bg='grey')
         Label3.grid(row=4, column=1)
-        Label33 = Label(top, text='1000 lux', bg='grey')
+        Label33 = Label(top, text='230', bg='grey')
         Label33.grid(row=4, column=2)
 
         Label4 = Label(top, text='Kantoor:', bg='grey')
         Label4.grid(row=5, column=1)
-        Label44 = Label(top, text='500 lux', bg='grey')
+        Label44 = Label(top, text='220', bg='grey')
         Label44.grid(row=5, column=2)
 
         Label5 = Label(top, text='Erg donkere dag: ', bg='grey')
         Label5.grid(row=6, column=1)
-        Label55 = Label(top, text='100 lux', bg='grey')
+        Label55 = Label(top, text='150', bg='grey')
         Label55.grid(row=6, column=2)
 
         Label6 = Label(top, text='Schemering:', bg='grey')
         Label6.grid(row=7, column=1)
-        Label66 = Label(top, text='10 lux', bg='grey')
+        Label66 = Label(top, text='100', bg='grey')
         Label66.grid(row=7, column=2)
 
         Label7 = Label(top, text='Donkere schemering:', bg='grey')
         Label7.grid(row=8, column=1)
-        Label77 = Label(top, text='1 lux', bg='grey')
+        Label77 = Label(top, text='50', bg='grey')
         Label77.grid(row=8, column=2)
 
         button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
@@ -154,7 +153,7 @@ class Program:
             i -= 1
             if not i:
                 self.handle_click()
-                # self.temperatuur_graph()
+                self.temperatuur_graph()
                 self.licht_graph()
                 self.data_afstand()
                 self.Label15 = Label(self.main, text=self.licht_data[-1:], fg='black', bg='grey')
@@ -177,11 +176,11 @@ class Program:
 
     def inrollen(self):
         Label22 = Label(self.main, text='Ingerold', fg='red', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+        Label22.grid(row=5, column=8, columnspan=2)
 
     def uitrollen(self):
         Label22 = Label(self.main, text='Uitgerold', fg='green', bg='grey')
-        Label22.grid(row=4, column=8, columnspan=2)
+        Label22.grid(row=5, column=8, columnspan=2)
 
 
     def data_afstand(self):
@@ -224,8 +223,8 @@ class Program:
         self.countx_licht_lijst.append(self.countx_licht)
         self.countx_licht += 1
 
-        self.x = self.countx_licht_lijst
-        self.y = self.licht_data
+        self.x = self.countx_licht_lijst[-10:]
+        self.y = self.licht_data[-10:]
 
         figure1 = Figure(figsize=(4, 4), dpi=70)
 
