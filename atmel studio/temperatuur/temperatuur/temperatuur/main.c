@@ -65,7 +65,7 @@ uint8_t receive()
 void led(uint8_t onoff){
 
 	
-	while(onoff == 0x0e){
+	if(onoff == 0x0e){
 		PORTB = 0x02;
 		_delay_ms(500);
 		PORTB = 0x00;
