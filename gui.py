@@ -10,7 +10,7 @@ import serial
 import struct
 
 
-#lichtser = serial.Serial('COM6',19200)             # Open connectie op COM6
+lichtser = serial.Serial('COM9',19200)             # Open connectie op COM6
 temperatuurser = serial.Serial('COM10', 19200)      # Open connectie op COM10
 # afstandser = serial.Serial('COM3',19200)
 # ser = serial.Serial('/dev/tty.usbmodem1411', 19200)
@@ -151,13 +151,13 @@ class Program:
                 # Hier staan alle functies die telkens uitgevoerd moeten worden
                 self.handle_click()
                 self.update_data()
-                #self.afstand_meten_uitrollen()
-                #self.afstand_meten_inrollen()
+                self.afstand_meten_uitrollen()
+                self.afstand_meten_inrollen()
                 self.temperatuur_graph()
-                #self.licht_graph()
+                self.licht_graph()
                 #self.data_afstand()
                 self.updatelabels()
-                #self.check_licht()
+                self.check_licht()
             else:
                self.root.after(50, callback)
         self.root.after(50, callback)
@@ -173,14 +173,14 @@ class Program:
 
 
     def update_data(self):
-        #data = self.recieve_data_licht()       # Zet seriële waarde in data
-        #if data == 0xff:                       # Check of de data 0xff is
-        #    data = self.recieve_data_licht()   # Zet seriële waarde na de 0xff in data
-        #    self.afstand_data.append(data)     # Voeg data toe in de afstand lijst
-        #data = self.recieve_data_licht()
-        #if data == 0x0f:                       # Check of de data 0x0f is
-        #    data = self.recieve_data_licht()   # Zet seriële waarde na de 0x0f in data
-        #    self.licht_data.append(data)       # Voeg data toe in de lichtintensiteit lijst
+        data = self.recieve_data_licht()       # Zet seriële waarde in data
+        if data == 0xff:                       # Check of de data 0xff is
+            data = self.recieve_data_licht()   # Zet seriële waarde na de 0xff in data
+            self.afstand_data.append(data)     # Voeg data toe in de afstand lijst
+        data = self.recieve_data_licht()
+        if data == 0x0f:                       # Check of de data 0x0f is
+            data = self.recieve_data_licht()   # Zet seriële waarde na de 0x0f in data
+            self.licht_data.append(data)       # Voeg data toe in de lichtintensiteit lijst
         data = self.recieve_data_temp()
         if data == 0xff:                        # Kijk of de data 0xff is
             data = self.recieve_data_temp()     # Zet seriële waarde na 0xff in data
