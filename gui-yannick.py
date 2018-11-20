@@ -15,7 +15,7 @@ import struct
 # lichtser = serial.Serial('COM5',19200)
 # # temperatuurser = serial.Serial('COM3',19200)
 # afstandser = serial.Serial('COM3',19200)
-ser = serial.Serial('/dev/tty.usbmodem1421', 19200)
+#ser = serial.Serial('/dev/tty.usbmodem1421', 19200)
 
 
 class Program:
@@ -88,19 +88,7 @@ class Program:
         self.Label17.grid(row=5, column=0, columnspan=4, pady=30)
 
         self.Label18 = Label(self.main, text='Licht intensiteit', fg='black', bg='grey')
-        self.Label18.grid(row=5, column=4, columnspan=4, pady=30)
-
-        # self.Label19 = Label(self.main, text='Derde grafiek', fg='black', bg = 'grey')
-        # self.Label19.grid(row=5, column=8, columnspan=4, pady=30)
-        # self.show_graph3()
-        #
-        # self.Label20 = Label(self.main, text='Vierde grafiek', fg='black', bg = 'grey')
-        # self.Label20.grid(row=7, column=0, columnspan=4, pady=30)
-        # self.show_graph4()
-        #
-        # self.Label21 = Label(self.main, text='Vijfde grafiek', fg='black', bg = 'grey')
-        # self.Label21.grid(row=7, column=4, columnspan=4, pady=30)
-        # self.show_graph5()
+        self.Label18.grid(row=5, column=4, columnspan=4, pady=30
 
         self.button = Button(self.main, text="Update 110", command=self.update_value)
         self.button.grid(row=4, column=6)
@@ -313,56 +301,6 @@ class Program:
         graph_widget1 = canvas1.get_tk_widget()
         graph_widget1.grid(row=6, column=4, columnspan=2, sticky='nsew', padx=80)
 
-    def show_graph3(self):
-
-        self.x = self.countxlijst
-        self.y = self.datainformation
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=6, column=8, columnspan=2, sticky='nsew', padx=80)
-
-    def show_graph4(self):
-
-        self.x = data.listx
-        self.y = data.listy
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=8, column=1, columnspan=2, sticky='nsew', padx=80)
-
-    def show_graph5(self):
-
-        self.x = data.listx
-        self.y = data.listy
-
-        figure1 = Figure(figsize=(4, 4), dpi=70)
-
-        aa = figure1.add_subplot(111)
-        aa.plot(self.x, self.y, marker='o')
-        aa.grid()
-
-        canvas1 = FigureCanvasTkAgg(figure1, master=self.main)
-        canvas1.draw()
-
-        graph_widget1 = canvas1.get_tk_widget()
-        graph_widget1.grid(row=8, column=4, columnspan=2, sticky='nsew', padx=80)
 
 
 program = Program()
