@@ -1,0 +1,232 @@
+from tkinter import *
+
+
+class Main:
+    root = Tk()
+    button_frame = Frame(width=300, height=50)
+    button_frame.pack()
+
+    status_color = 'white'
+    rol_status = 0
+    geel = 0
+    rood = 1
+    groen = 0
+    grens_rolluik = 100             #Grens van de afstand van rolluik
+    licht_intensiteit = 0
+    temperatuur_intensiteit = 0
+    afstand_rolluik = 0
+    licht_grens = 100               #Grens van de licht intensiteit
+    licht_status = 0
+    temperatuur_grens = 100         #Grens van de temperatuur
+    temperatuur_status = 0
+    knop = 0
+
+    knop_uitrollen = 0
+    knop_inrollen = 0
+
+    status_frame = Frame(width=50, height=50)
+    status_frame.pack()
+
+    info_frame = Frame()
+    info_frame.pack(side=BOTTOM)
+
+    def __init__(self):
+        self.handle_click()
+        uitrollen_button = button = Button(self.button_frame, width=12, height=2, text="UITROLLEN", fg="black", command=self.laten_uitrollen_arduino_button)
+        uitrollen_button.grid(row=0, column=0)
+        inrollen_button = button = Button(self.button_frame, width=12, height=2, text="INROLLEN", fg="black", command=self.laten_inrollen_arduino_button)
+        inrollen_button.grid(row=0, column=1)
+        status_button = button = Button(self.button_frame, width=12, height=2, text="STATUS", fg="black", command=self.printing)
+        status_button.grid(row=0, column=2)
+
+        self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
+        self.afstand.set(90)
+        self.afstand.grid(row=2, column=0, columnspan=2)
+        self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.temperatuur)
+        self.temperatuur.set(90)
+        self.temperatuur.grid(row=3, column=0, columnspan=2)
+        self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
+        self.licht.set(90)
+        self.licht.grid(row=4, column=0, columnspan=2)
+
+    def printing(self):
+        print('knop: ' + str(self.knop))
+        print('rol status: ' + str(self.rol_status))
+        print('licht: ' + str(self.licht_status))
+        print('Temp: ' + str(self.temperatuur_status))
+        print('Geel: ' + str(self.geel))
+        print('Groen: ' + str(self.groen))
+        print('Rood: ' + str(self.rood))
+
+
+    def uitrol_functie(self):
+        self.knop_uitrollen = 1
+        self.rolluik()
+
+    def inrol_functie(self):
+        self.knop_inrollen = 1
+
+
+    def rolluik(self):
+        if(self.knop_uitrollen == 1):
+
+
+
+    """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen door de twee knoppen"""
+    def laten_uitrollen_arduino_button(self):
+        self.rol_status = 1
+        if(self.geel == 0 and self.groen == 0):
+            self.knop = 1
+            self.rood = 0
+            self.groen = 0
+            self.geel = 1
+
+    def laten_inrollen_arduino_button(self):
+        if(self.rol_status == 0):
+            pass
+        elif(self.rol_status == 1):
+            self.knop = 0
+            self.rol_status = 0
+            self.geel = 1
+            self.groen = 0
+            self.rood = 0
+
+    """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen als de lichtsensor over zijn grens gaat"""
+
+    def laten_uitrollen_arduino_licht(self):
+        if(self.groen == 0):
+            self.rol_status = 1
+            self.licht_status = 1
+            self.rood = 0
+            self.groen = 0
+            self.geel = 1
+
+    def laten_inrollen_arduino_licht(self):
+        if(self.rol_status == 0):
+            pass
+        elif(self.rol_status == 1):
+            self.rol_status = 0
+            self.licht_status = 0
+            self.geel = 1
+            self.groen = 0
+            self.rood = 0
+
+    """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen als de temperatuursensor over zijn grens gaat"""
+
+    def laten_inrollen_arduino_temp(self):
+        if(self.rol_status == 0):
+            pass
+        elif(self.rol_status == 1):
+            self.rol_status = 0
+            self.temperatuur_status = 0
+            self.geel = 1
+            self.groen = 0
+            self.rood = 0
+
+    def laten_uitrollen_arduino_temp(self):
+        if(self.groen == 0):
+            self.rol_status = 1
+            self.temperatuur_status = 1
+            self.rood = 0
+            self.groen = 0
+            self.geel = 1
+
+    def rollen(self):
+        if(self.afstand_rolluik > self.grens_rolluik and self.rol_status == 1):
+            self.uitrollen()
+        elif(self.afstand_rolluik < 10 and self.rol_status == 0):
+            self.inrollen()
+
+    def uitrollen(self):        #Deze functie wordt aangeroepen als de afstand van het rolluik over zijn grens gaat
+        self.geel = 0           #(dus als hij helemaal uitgerold is)
+        self.rood = 0
+        self.groen = 1
+
+    def inrollen(self):         # Deze functie wordt aangeroepen als de afstand van het rolluik onder zijn grens gaat
+        self.geel = 0           # (dus als hij helemaal ingerold is)
+        self.geel = 0
+        self.groen = 0
+        self.rood = 1
+
+    def handle_click(self):
+        i = 5
+        def callback():
+            nonlocal i
+            i -= 1
+            if not i:
+                self.handle_click()
+                self.update_label()         #Deze functie update de status van het rolluik (ook niet helemaal van toepassing in uiteindelijke project)
+                self.color_update()         #Deze functie update het vakje dat het LEDje simuleert (niet van toepassing in uiteindelijke project)
+                self.rollen()               #Het constant checken van de afstand van het rolluik met de aangegeven grens
+                self.licht_checken()        #Het constant checken van de lichtsensor
+                self.temperatuur_checken()  #Het constant checken van de temperatuursensor
+            else:
+               self.root.after(1, callback)
+        self.root.after(1, callback)
+
+    def update_label(self):
+        self.Label15 = Label(self.status_frame, text='          ', fg=self.status_color, bg=self.status_color)
+        self.Label15.grid(row=1, column=5)
+        self.Label16 = Label(self.status_frame, text=self.rol_status, fg='black', bg='white')
+        self.Label16.grid(row=5, column= 5)
+
+    """Schrijft de afstand van de afstand sensor naar de variabele: afstand_rolluik"""
+    def afstand(self, afstand):
+        self.label_afstand = Label(self.status_frame, text='afstand: ' + afstand, fg='black', bg='white')
+        self.label_afstand.grid(row=2, column=5)
+        self.afstand_rolluik = int(afstand)
+
+    """Schrijft de temperatuur van de temperatuur sensor naar de variabele: temperatuur_intensiteit"""
+    def temperatuur(self, temperatuur):
+        self.label_afstand = Label(self.status_frame, text='temperatuur: ' + temperatuur, fg='black', bg='white')
+        self.label_afstand.grid(row=3, column=5)
+        self.temperatuur_intensiteit = int(temperatuur)
+
+
+    """Schrijft de licht intensiteit van de licht sensor naar de variabele: licht_intensiteit"""
+
+    def licht(self, lux):
+        self.label_licht = Label(self.status_frame, text='lux: ' + lux, fg='black', bg='white')
+        self.label_licht.grid(row=4, column=5)
+        self.licht_intensiteit = int(lux)
+
+
+    """Update de kleur van het vakje dat het LEDje moet simuleren"""
+    def color_update(self):
+        if(self.geel == 1):
+            self.status_color = 'yellow'
+
+        elif(self.rood == 1):
+            self.status_color = 'red'
+
+        elif(self.groen == 1):
+            self.status_color = 'green'
+
+
+    """Checkt constant de waarde van de lichtsensor"""
+
+    def licht_checken(self):
+        #Als de licht intensiteit groter is dan de grens en het rolluik ingerold is
+        if(self.licht_intensiteit > self.licht_grens and self.rol_status == 0):
+            self.laten_uitrollen_arduino_licht()
+        #Als de licht intensiteit kleiner is dan de grens en het rolluik ingerold is en licht_status == 1 dan inrollen
+        #licht_status == 1 zorgt ervoor dat de functie kijkt of het rolluik is uitgerold doordat de grens van de licht intensiteit is overschreden
+        #Als het rolluik dus is uitgerold door de licht grens dan zal deze ook weer inrollen als de licht intensiteit onder de grens komt
+        #Als het rolluik niet is uitgerold door de licht grens dan zal deze ook niet inrollen als de licht intensiteit onder de grens komt (anders blijft hij namelijk inrollen als je op uitrollen drukt)
+        elif(self.licht_intensiteit < self.licht_grens and self.rol_status == 1 and self.knop == 0 and self.licht_status == 1):
+            self.laten_inrollen_arduino_licht()
+
+    def temperatuur_checken(self):
+        if(self.temperatuur_intensiteit > self.temperatuur_grens and self.rol_status == 0):
+            self.laten_uitrollen_arduino_temp()
+        #Als de temperatuur  kleiner is dan de grens en het rolluik ingerold is en temperatuur_status == 1 dan inrollen
+        #temperatuur_status == 1 zorgt ervoor dat de functie kijkt of het rolluik is uitgerold doordat de grens van de temperatuur is overschreden
+        #Als het rolluik dus is uitgerold door de temperatuur grens dan zal deze ook weer inrollen als de temperatuur onder de grens komt
+        #Als het rolluik niet is uitgerold door de temperatuur grens dan zal deze ook niet inrollen als de temperatuur onder de grens komt (anders blijft hij namelijk inrollen als je op uitrollen drukt)
+        elif(self.temperatuur_intensiteit < self.temperatuur_grens and self.rol_status == 1 and self.knop == 0 and self.temperatuur_status == 1):
+            self.laten_inrollen_arduino_temp()
+
+
+main = Main()
+Main.root.mainloop()
+
