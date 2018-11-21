@@ -1,8 +1,12 @@
 from tkinter import *
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 
 
 class Main:
     root = Tk()
+    root.title('Zeng ltd')
     button_frame = Frame(width=300, height=50)
     button_frame.pack()
 
@@ -34,6 +38,9 @@ class Main:
     status_frame = Frame(width=50, height=50)
     status_frame.pack()
 
+    graph_frame = Frame(width=300, height=50)
+    graph_frame.pack()
+
     def __init__(self):
         self.handle_click()
         uitrollen_button = Button(self.button_frame, width=12, height=2, text="UITROLLEN", fg="black", command=self.laten_uitrollen_arduino_button)
@@ -53,11 +60,18 @@ class Main:
         self.afstand.set(90)
         self.afstand.grid(row=2, column=0, columnspan=2)
         self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.temperatuur)
-        self.temperatuur.set(90)
+        self.temperatuur.set(20)
         self.temperatuur.grid(row=3, column=0, columnspan=2)
         self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
         self.licht.set(90)
         self.licht.grid(row=4, column=0, columnspan=2)
+
+        self.afstandlabel = Label(self.status_frame, text='Afstand: ', fg='black')
+        self.afstandlabel.grid(row=5, column=1, columnspan=2)
+
+        self.temperatuur_graph()
+        self.licht_graph()
+
 
     def create_window(self):
         top = Toplevel()
@@ -199,6 +213,8 @@ class Main:
                 self.rollen()               #Het constant checken van de afstand van het rolluik met de aangegeven grens
                 self.licht_checken()        #Het constant checken van de lichtsensor
                 self.temperatuur_checken()  #Het constant checken van de temperatuursensor
+                self.licht_graph()          #laat de licht grafiek updaten
+                self.temperatuur_graph()    #laat de temp grafiek updaten
             else:
                self.root.after(1, callback)
         self.root.after(1, callback)
@@ -263,6 +279,60 @@ class Main:
         #Als het rolluik niet is uitgerold door de temperatuur grens dan zal deze ook niet inrollen als de temperatuur onder de grens komt (anders blijft hij namelijk inrollen als je op uitrollen drukt)
         elif(self.temperatuur_intensiteit < self.temperatuur_grens and self.rol_status == 1 and self.knop == 0 and self.temperatuur_status == 1):
             self.laten_inrollen_arduino_temp()
+
+    """"Temperatuur grafiek"""
+    def temperatuur_graph(self):
+        x = [0,1,2,3,4,5]
+        y = [0,1,2,3,4,5]
+        self.x = x
+        self.y = y
+
+        temp = self.temperatuur_intensiteit
+        maxtemp = [temp, temp, temp, temp, temp, temp]
+
+        figure = Figure(figsize=(4, 4), dpi=70)
+        figure.suptitle('Temperatuur')
+
+        a = figure.add_subplot(111)
+        a.plot(self.x, self.y, marker='o')
+        a.plot(maxtemp, marker='o')
+        a.grid()
+
+
+        canvas = FigureCanvasTkAgg(figure, master=self.graph_frame)
+        canvas.draw()
+
+        graph_widget = canvas.get_tk_widget()
+        graph_widget.grid(row=5, column=0, columnspan=2, sticky='nsew')
+
+    """"Lichtintens grafiek"""
+    def licht_graph(self):
+        x = [1, 2, 3, 4, 5]
+        y = [1, 2, 3, 4, 5]
+        self.x = x
+        self.y = y
+
+        licht = self.licht_intensiteit
+        maxlicht = [licht, licht, licht, licht, licht, licht,]
+
+
+        figure = Figure(figsize=(4, 4), dpi=70)
+        figure.suptitle('Licht intensiteit')
+        plt.xlabel('temp')
+        plt.ylabel('temp')
+
+
+        a = figure.add_subplot(111)
+        a.plot(self.x, self.y, marker='o')
+        a.plot(maxlicht, marker='o')
+        a.grid()
+
+        canvas = FigureCanvasTkAgg(figure, master=self.graph_frame)
+        canvas.draw()
+
+        graph_widget = canvas.get_tk_widget()
+        graph_widget.grid(row=5, column=2, columnspan=2, sticky='nsew')
+
 
 
 main = Main()
