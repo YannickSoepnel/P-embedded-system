@@ -43,6 +43,12 @@ class Main:
         status_button = Button(self.button_frame, width=12, height=2, text="STATUS", fg="black", command=self.printing)
         status_button.grid(row=0, column=2)
 
+        self.quitButton = Button(self.button_frame,text='Quit App', width=12, height=2, command=quit)
+        self.quitButton.grid(row=1, column=1)
+        self.inforwindow = Button(self.button_frame, width=12, height=2, text="Click for info", fg="black", command=self.create_window)
+        self.inforwindow.grid(row=1, column=0)
+
+
         self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
         self.afstand.set(90)
         self.afstand.grid(row=2, column=0, columnspan=2)
@@ -52,6 +58,48 @@ class Main:
         self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
         self.licht.set(90)
         self.licht.grid(row=4, column=0, columnspan=2)
+
+    def create_window(self):
+        top = Toplevel()
+        top.title("Info")
+
+        Label1 = Label(top, text='Zonlicht:')
+        Label1.grid(row=2, column=1)
+        label11 = Label(top, text='165')
+        label11.grid(row=2, column=2)
+
+        Label2 = Label(top, text='Daglicht, indirect zonlicht:')
+        Label2.grid(row=3, column=1)
+        Label22 = Label(top, text='150')
+        Label22.grid(row=3, column=2)
+
+        Label3 = Label(top, text='Bewolkte dag:')
+        Label3.grid(row=4, column=1)
+        Label33 = Label(top, text='140')
+        Label33.grid(row=4, column=2)
+
+        Label4 = Label(top, text='Kantoor:')
+        Label4.grid(row=5, column=1)
+        Label44 = Label(top, text='120')
+        Label44.grid(row=5, column=2)
+
+        Label5 = Label(top, text='Erg donkere dag: ')
+        Label5.grid(row=6, column=1)
+        Label55 = Label(top, text='100')
+        Label55.grid(row=6, column=2)
+
+        Label6 = Label(top, text='Schemering:')
+        Label6.grid(row=7, column=1)
+        Label66 = Label(top, text='80')
+        Label66.grid(row=7, column=2)
+
+        Label7 = Label(top, text='Donkere schemering:')
+        Label7.grid(row=8, column=1)
+        Label77 = Label(top, text='40')
+        Label77.grid(row=8, column=2)
+
+        button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
+        button.grid(row=9, column=1)
 
     def printing(self):
         print('knop: ' + str(self.knop))
@@ -177,7 +225,7 @@ class Main:
     """Schrijft de licht intensiteit van de licht sensor naar de variabele: licht_intensiteit"""
 
     def licht(self, lux):
-        self.label_licht = Label(self.status_frame, text='lux: ' + lux, fg='black', bg='white')
+        self.label_licht = Label(self.status_frame, text='licht intens: ' + lux, fg='black', bg='white')
         self.label_licht.grid(row=4, column=5)
         self.licht_intensiteit = int(lux)
 
