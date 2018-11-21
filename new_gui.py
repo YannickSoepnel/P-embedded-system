@@ -14,8 +14,8 @@ class Main:
     """STATUS"""
     rol_status = 0
     knop = 0
-    knop_uitrollen = 0
-    knop_inrollen = 0
+    licht_status = 0
+    temperatuur_status = 0
 
     """"LEDJES"""
     geel = 0
@@ -28,11 +28,9 @@ class Main:
     temperatuur_grens = 100         #Grens van de temperatuur
 
     """VARIABELE SENSOREN"""
-    licht_intensiteit = 0
-    temperatuur_intensiteit = 0
-    afstand_rolluik = 0
-    licht_status = 0
-    temperatuur_status = 0
+    licht_intensiteit = 0           #Dit moet de meest recentelijke waarde worden van de lichtsensor
+    temperatuur_intensiteit = 0     #Dit moet de meest recentelijke waarde worden van de temperatuursensor
+    afstand_rolluik = 0             #Dit moet de meest recentelijke waarde worden van de afstandsensor
 
     status_frame = Frame(width=50, height=50)
     status_frame.pack()
@@ -58,10 +56,10 @@ class Main:
         self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
         self.afstand.set(90)
         self.afstand.grid(row=2, column=0, columnspan=2)
-        self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=-10, to=50, length=200, command=self.temperatuur)
+        self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=-10, to=50, length=200, command=self.grens_temperatuur)
         self.temperatuur.set(20)
         self.temperatuur.grid(row=3, column=0, columnspan=2)
-        self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
+        self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.grens_licht)
         self.licht.set(90)
         self.licht.grid(row=4, column=0, columnspan=2)
 
@@ -224,25 +222,25 @@ class Main:
         self.Label16 = Label(self.status_frame, text=self.rol_status, fg='black', bg='white')
         self.Label16.grid(row=5, column= 5)
 
+    """DEZE FUNCTIE SCHRIJFT DE WAARDE VAN SLIDER NAAR LICHT_GRENS"""
+
+    def grens_licht(self, lux):
+        self.label_licht = Label(self.status_frame, text='licht intens: ' + lux, fg='black')
+        self.label_licht.grid(row=4, column=5)
+        self.licht_grens = int(lux)
+
+    def grens_temperatuur(self, temperatuur):
+        self.label_afstand = Label(self.status_frame, text='temperatuur: ' + temperatuur, fg='black')
+        self.label_afstand.grid(row=3, column=5)
+        self.temperatuur_grens = int(temperatuur)
+
+
     """Schrijft de afstand van de afstand sensor naar de variabele: afstand_rolluik"""
     def afstand(self, afstand):
-        self.label_afstand = Label(self.status_frame, text='afstand: ' + afstand, fg='black', bg='white')
+        self.label_afstand = Label(self.status_frame, text='afstand: ' + afstand, fg='black')
         self.label_afstand.grid(row=2, column=5)
         self.afstand_rolluik = int(afstand)
 
-    """Schrijft de temperatuur van de temperatuur sensor naar de variabele: temperatuur_intensiteit"""
-    def temperatuur(self, temperatuur):
-        self.label_afstand = Label(self.status_frame, text='temperatuur: ' + temperatuur, fg='black', bg='white')
-        self.label_afstand.grid(row=3, column=5)
-        self.temperatuur_intensiteit = int(temperatuur)
-
-
-    """Schrijft de licht intensiteit van de licht sensor naar de variabele: licht_intensiteit"""
-
-    def licht(self, lux):
-        self.label_licht = Label(self.status_frame, text='licht intens: ' + lux, fg='black', bg='white')
-        self.label_licht.grid(row=4, column=5)
-        self.licht_intensiteit = int(lux)
 
     """Update de kleur van het vakje dat het LEDje moet simuleren"""
     def color_update(self):
@@ -286,7 +284,7 @@ class Main:
         self.x = x
         self.y = y
 
-        temp = self.temperatuur_intensiteit
+        temp = self.temperatuur_grens
         maxtemp = [temp, temp, temp, temp, temp, temp]
 
         figure = Figure(figsize=(4, 4), dpi=70)
@@ -311,7 +309,7 @@ class Main:
         self.x = x
         self.y = y
 
-        licht = self.licht_intensiteit
+        licht = self.licht_grens
         maxlicht = [licht, licht, licht, licht, licht, licht,]
 
 
