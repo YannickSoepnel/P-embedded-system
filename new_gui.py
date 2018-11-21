@@ -7,36 +7,40 @@ class Main:
     button_frame.pack()
 
     status_color = 'white'
+
+    """STATUS"""
     rol_status = 0
+    knop = 0
+    knop_uitrollen = 0
+    knop_inrollen = 0
+
+    """"LEDJES"""
     geel = 0
     rood = 1
     groen = 0
+
+    """GRENZEN"""
     grens_rolluik = 100             #Grens van de afstand van rolluik
+    licht_grens = 100               #Grens van de licht intensiteit
+    temperatuur_grens = 100         #Grens van de temperatuur
+
+    """VARIABELE SENSOREN"""
     licht_intensiteit = 0
     temperatuur_intensiteit = 0
     afstand_rolluik = 0
-    licht_grens = 100               #Grens van de licht intensiteit
     licht_status = 0
-    temperatuur_grens = 100         #Grens van de temperatuur
     temperatuur_status = 0
-    knop = 0
-
-    knop_uitrollen = 0
-    knop_inrollen = 0
 
     status_frame = Frame(width=50, height=50)
     status_frame.pack()
 
-    info_frame = Frame()
-    info_frame.pack(side=BOTTOM)
-
     def __init__(self):
         self.handle_click()
-        uitrollen_button = button = Button(self.button_frame, width=12, height=2, text="UITROLLEN", fg="black", command=self.laten_uitrollen_arduino_button)
+        uitrollen_button = Button(self.button_frame, width=12, height=2, text="UITROLLEN", fg="black", command=self.laten_uitrollen_arduino_button)
         uitrollen_button.grid(row=0, column=0)
-        inrollen_button = button = Button(self.button_frame, width=12, height=2, text="INROLLEN", fg="black", command=self.laten_inrollen_arduino_button)
+        inrollen_button = Button(self.button_frame, width=12, height=2, text="INROLLEN", fg="black", command=self.laten_inrollen_arduino_button)
         inrollen_button.grid(row=0, column=1)
-        status_button = button = Button(self.button_frame, width=12, height=2, text="STATUS", fg="black", command=self.printing)
+        status_button = Button(self.button_frame, width=12, height=2, text="STATUS", fg="black", command=self.printing)
         status_button.grid(row=0, column=2)
 
         self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
@@ -57,19 +61,6 @@ class Main:
         print('Geel: ' + str(self.geel))
         print('Groen: ' + str(self.groen))
         print('Rood: ' + str(self.rood))
-
-
-    def uitrol_functie(self):
-        self.knop_uitrollen = 1
-        self.rolluik()
-
-    def inrol_functie(self):
-        self.knop_inrollen = 1
-
-
-    def rolluik(self):
-        if(self.knop_uitrollen == 1):
-
 
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen door de twee knoppen"""
@@ -189,7 +180,6 @@ class Main:
         self.label_licht = Label(self.status_frame, text='lux: ' + lux, fg='black', bg='white')
         self.label_licht.grid(row=4, column=5)
         self.licht_intensiteit = int(lux)
-
 
     """Update de kleur van het vakje dat het LEDje moet simuleren"""
     def color_update(self):
