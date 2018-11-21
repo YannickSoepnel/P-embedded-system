@@ -1,7 +1,6 @@
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from matplotlib import pyplot as plt
 
 
 class Main:
@@ -59,7 +58,7 @@ class Main:
         self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
         self.afstand.set(90)
         self.afstand.grid(row=2, column=0, columnspan=2)
-        self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.temperatuur)
+        self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=-10, to=50, length=200, command=self.temperatuur)
         self.temperatuur.set(20)
         self.temperatuur.grid(row=3, column=0, columnspan=2)
         self.licht = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.licht)
@@ -216,8 +215,8 @@ class Main:
                 self.licht_graph()          #laat de licht grafiek updaten
                 self.temperatuur_graph()    #laat de temp grafiek updaten
             else:
-               self.root.after(1, callback)
-        self.root.after(1, callback)
+               self.root.after(10, callback)
+        self.root.after(10, callback)
 
     def update_label(self):
         self.Label15 = Label(self.status_frame, text='          ', fg=self.status_color, bg=self.status_color)
@@ -283,7 +282,7 @@ class Main:
     """"Temperatuur grafiek"""
     def temperatuur_graph(self):
         x = [0,1,2,3,4,5]
-        y = [0,1,2,3,4,5]
+        y = [20,24,23,23,24,25]
         self.x = x
         self.y = y
 
@@ -318,8 +317,6 @@ class Main:
 
         figure = Figure(figsize=(4, 4), dpi=70)
         figure.suptitle('Licht intensiteit')
-        plt.xlabel('temp')
-        plt.ylabel('temp')
 
 
         a = figure.add_subplot(111)
