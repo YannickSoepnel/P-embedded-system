@@ -85,5 +85,9 @@ class Connectie:
         # print(' temp '+ str(newdata))
         return newdata
 
+    def send_led(self, color):
+        self.con2.write(struct.pack('>B', color))
+
+
     # if __name__ == '__main__':
     #     serial_scanner()

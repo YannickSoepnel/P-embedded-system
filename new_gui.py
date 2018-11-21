@@ -2,6 +2,7 @@ from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from test2 import ReadData
+from connection import Connectie
 
 
 class Main:
@@ -134,6 +135,8 @@ class Main:
             self.rood = 0
             self.groen = 0
             self.geel = 1
+            Connectie.send_led(Connectie, 0x0e)
+            Connectie.send_led(Connectie, 0x0f)
 
     def laten_inrollen_arduino_button(self):
         if(self.rol_status == 0):
@@ -144,6 +147,8 @@ class Main:
             self.geel = 1
             self.groen = 0
             self.rood = 0
+            Connectie.send_led(Connectie, 0x0e)
+            Connectie.send_led(Connectie, 0x0f)
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen als de lichtsensor over zijn grens gaat"""
 
@@ -176,6 +181,8 @@ class Main:
             self.geel = 1
             self.groen = 0
             self.rood = 0
+            Connectie.send_led(Connectie, 0x0e)
+            Connectie.send_led(Connectie, 0x0f)
 
     def laten_uitrollen_arduino_temp(self):
         if(self.groen == 0):
@@ -184,6 +191,8 @@ class Main:
             self.rood = 0
             self.groen = 0
             self.geel = 1
+            Connectie.send_led(Connectie, 0x0e)
+            Connectie.send_led(Connectie, 0x0f)
 
     def rollen(self):
         if(self.afstand_rolluik > self.grens_rolluik and self.rol_status == 1):
@@ -195,12 +204,19 @@ class Main:
         self.geel = 0           #(dus als hij helemaal uitgerold is)
         self.rood = 0
         self.groen = 1
+        Connectie.send_led(Connectie, 0x0f)
+        Connectie.send_led(Connectie, 0x00)
+
+
 
     def inrollen(self):         # Deze functie wordt aangeroepen als de afstand van het rolluik onder zijn grens gaat
         self.geel = 0           # (dus als hij helemaal ingerold is)
         self.geel = 0
         self.groen = 0
         self.rood = 1
+        Connectie.send_led(Connectie, 0xff)
+        Connectie.send_led(Connectie, 0x0f)
+
 
     def handle_click(self):
         i = 5
