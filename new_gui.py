@@ -1,6 +1,7 @@
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from test2 import ReadData
 
 
 class Main:
@@ -32,6 +33,7 @@ class Main:
     temperatuur_intensiteit = 0     #Dit moet de meest recentelijke waarde worden van de temperatuursensor
     afstand_rolluik = 0             #Dit moet de meest recentelijke waarde worden van de afstandsensor
 
+
     status_frame = Frame(width=50, height=50)
     status_frame.pack()
 
@@ -53,9 +55,9 @@ class Main:
         self.inforwindow.grid(row=1, column=0)
 
 
-        self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
-        self.afstand.set(90)
-        self.afstand.grid(row=2, column=0, columnspan=2)
+        # self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
+        # self.afstand.set(90)
+        # self.afstand.grid(row=2, column=0, columnspan=2)
         self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=-10, to=50, length=200, command=self.grens_temperatuur)
         self.temperatuur.set(20)
         self.temperatuur.grid(row=3, column=0, columnspan=2)
@@ -113,13 +115,15 @@ class Main:
         button.grid(row=9, column=1)
 
     def printing(self):
-        print('knop: ' + str(self.knop))
-        print('rol status: ' + str(self.rol_status))
-        print('licht: ' + str(self.licht_status))
-        print('Temp: ' + str(self.temperatuur_status))
-        print('Geel: ' + str(self.geel))
-        print('Groen: ' + str(self.groen))
-        print('Rood: ' + str(self.rood))
+        # print('knop: ' + str(self.knop))
+        # print('rol status: ' + str(self.rol_status))
+        # print('licht: ' + str(self.licht_status))
+        # print('Temp: ' + str(self.temperatuur_status))
+        # print('Geel: ' + str(self.geel))
+        # print('Groen: ' + str(self.groen))
+        # print('Rood: ' + str(self.rood))
+        print(ReadData.count_data)
+        print(ReadData.temperatuur_data)
 
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen door de twee knoppen"""
@@ -210,36 +214,45 @@ class Main:
                 self.rollen()               #Het constant checken van de afstand van het rolluik met de aangegeven grens
                 self.licht_checken()        #Het constant checken van de lichtsensor
                 self.temperatuur_checken()  #Het constant checken van de temperatuursensor
+                ReadData.update_data(ReadData)
+                self.update_sensor()
                 self.licht_graph()          #laat de licht grafiek updaten
                 self.temperatuur_graph()    #laat de temp grafiek updaten
+                self.printing()
+
             else:
-               self.root.after(10, callback)
-        self.root.after(10, callback)
+               self.root.after(100, callback)
+        self.root.after(100, callback)
 
     def update_label(self):
         self.Label15 = Label(self.status_frame, text='          ', fg=self.status_color, bg=self.status_color)
         self.Label15.grid(row=1, column=5)
         self.Label16 = Label(self.status_frame, text=self.rol_status, fg='black', bg='white')
         self.Label16.grid(row=5, column= 5)
+        self.label_afstand = Label(self.status_frame, text='afstand: ' + str(self.afstand_rolluik), fg='black')
+        self.label_afstand.grid(row=2, column=5)
+        self.label_afstand = Label(self.status_frame, text='temperatuur: ' + str(self.temperatuur_intensiteit), fg='black')
+        self.label_afstand.grid(row=3, column=5)
+        self.label_licht = Label(self.status_frame, text='licht intens: ' + str(self.licht_intensiteit), fg='black')
+        self.label_licht.grid(row=4, column=5)
+
+    def update_sensor(self):
+        if(len(ReadData.afstand_data) != 0):
+            self.afstand_rolluik = ReadData.afstand_data[-1]
+        if (len(ReadData.temperatuur_data) != 0):
+            self.temperatuur_intensiteit = ReadData.temperatuur_data[-1]
+        if (len(ReadData.licht_data) != 0):
+            self.licht_intensiteit = ReadData.licht_data[-1]
 
     """DEZE FUNCTIE SCHRIJFT DE WAARDE VAN SLIDER NAAR LICHT_GRENS"""
 
     def grens_licht(self, lux):
-        self.label_licht = Label(self.status_frame, text='licht intens: ' + lux, fg='black')
-        self.label_licht.grid(row=4, column=5)
         self.licht_grens = int(lux)
 
     def grens_temperatuur(self, temperatuur):
-        self.label_afstand = Label(self.status_frame, text='temperatuur: ' + temperatuur, fg='black')
-        self.label_afstand.grid(row=3, column=5)
         self.temperatuur_grens = int(temperatuur)
 
 
-    """Schrijft de afstand van de afstand sensor naar de variabele: afstand_rolluik"""
-    def afstand(self, afstand):
-        self.label_afstand = Label(self.status_frame, text='afstand: ' + afstand, fg='black')
-        self.label_afstand.grid(row=2, column=5)
-        self.afstand_rolluik = int(afstand)
 
 
     """Update de kleur van het vakje dat het LEDje moet simuleren"""
@@ -279,10 +292,13 @@ class Main:
 
     """"Temperatuur grafiek"""
     def temperatuur_graph(self):
-        x = [0,1,2,3,4,5]
-        y = [20,24,23,23,24,25]
-        self.x = x
-        self.y = y
+        self.x = ReadData.count_data[-10:]
+        self.y = ReadData.temperatuur_data[-10:]
+
+        # x = [1, 2, 3, 4, 5]
+        # y = [1, 2, 3, 4, 5]
+        # self.x = x
+        # self.y = y
 
         temp = self.temperatuur_grens
         maxtemp = [temp, temp, temp, temp, temp, temp]
@@ -304,10 +320,8 @@ class Main:
 
     """"Lichtintens grafiek"""
     def licht_graph(self):
-        x = [1, 2, 3, 4, 5]
-        y = [1, 2, 3, 4, 5]
-        self.x = x
-        self.y = y
+        self.x = ReadData.count_data[-10:]
+        self.y = ReadData.licht_data[-10:]
 
         licht = self.licht_grens
         maxlicht = [licht, licht, licht, licht, licht, licht,]

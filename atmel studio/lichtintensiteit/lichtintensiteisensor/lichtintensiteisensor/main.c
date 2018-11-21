@@ -24,7 +24,6 @@ uint8_t temp;
 void init_ports(void)
 {
 	DDRC = 0x00;
-	DDRB |=  0xFF;
 	DDRD &=~ (1 << PIND3);
 	DDRD |= (1 << PIND2);
 }
@@ -136,10 +135,10 @@ int main(void)
     while (1) 
     {
 		send_trigger();
-		_delay_ms(500);
+		_delay_ms(1000);
 		uint16_t distance = calc_cm(gv_counter);
 		analog = get_adc_value();
-		transmit(0xff);
+		transmit(0xf0);
 		//_delay_ms(50);
 		transmit(distance);
 		//_delay_ms(50);
@@ -149,4 +148,3 @@ int main(void)
 			
     }
 }
-
