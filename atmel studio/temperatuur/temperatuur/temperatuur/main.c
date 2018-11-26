@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <avr/sfr_defs.h>
 #include <util/delay.h>
+#include "AVR_TTC_scheduler.c"
+// #include "AVR_TTC_scheduler.h"
 #define UBBRVAL 51
 
 
@@ -64,18 +66,17 @@ uint8_t receive()
 
 void led(uint8_t onoff){
 
-	
+	UDR0 = 0x00;
 	if(onoff == 0x0e){
 		PORTB = 0x02;
-		_delay_ms(500);
-		PORTB = 0x00;
-		_delay_ms(500);
+		//_delay_ms(500);
+		//PORTB = 0x00;
+		//_delay_ms(500);
 	}
-
 	if(onoff == 0xff){                   //rode led gaat aan (hij is ingerold dus)
 		PORTB = 0x01;
 	}
-	else if(onoff == 0x0f){               //Groene led gaat aan (hij is uitgerold dus)
+	if(onoff == 0x0f){               //Groene led gaat aan (hij is uitgerold dus)
 		PORTB = 0x04;
 	}
 }
@@ -86,24 +87,35 @@ void recieving()
 	led(temp);
 }
 
+void send_data()
+{
+	analog = get_adc_value();
+	voltage = analog * 0.004882814;
+	tempC = (voltage - 0.5) * 100.0;
+	tempC = tempC * 10;
+	int sendtemp = tempC;
+	transmit(0xff);
+	transmit(sendtemp);
+	
+}
 int main(void)
 {
+	SCH_Init_T1();
     uart_init();
 	init_adc();
 	DDRB = 0xff;
+	
+	SCH_Add_Task(send_data, 0, 50);
+	//SCH_Add_Task(recieving, 0, 100);
+	
+	SCH_Start(); // Starts SEI
+
+	
     while (1) 
     {
-		_delay_ms(500);
-		analog = get_adc_value();
-		voltage = analog * 0.004882814;
-		tempC = (voltage - 0.5) * 100.0;
-		tempC = tempC * 10;
-		int sendtemp = tempC;
-		transmit(0xff);
-		transmit(sendtemp);
-		if(UDR0 != 0x00){
-			recieving();
-		}
+		
+		SCH_Dispatch_Tasks();
+
 		
     }
 }

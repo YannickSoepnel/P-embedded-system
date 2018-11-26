@@ -1,4 +1,5 @@
 from tkinter import *
+import time
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from test2 import ReadData
@@ -123,8 +124,9 @@ class Main:
         # print('Geel: ' + str(self.geel))
         # print('Groen: ' + str(self.groen))
         # print('Rood: ' + str(self.rood))
-        print(ReadData.count_data)
-        print(ReadData.temperatuur_data)
+        # print(ReadData.count_data)
+        # print(ReadData.temperatuur_data)
+        pass
 
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen door de twee knoppen"""
@@ -224,21 +226,21 @@ class Main:
             nonlocal i
             i -= 1
             if not i:
+                ReadData.update_data(ReadData)
+                self.update_sensor()
                 self.handle_click()
                 self.update_label()         #Deze functie update de status van het rolluik (ook niet helemaal van toepassing in uiteindelijke project)
                 self.color_update()         #Deze functie update het vakje dat het LEDje simuleert (niet van toepassing in uiteindelijke project)
                 self.rollen()               #Het constant checken van de afstand van het rolluik met de aangegeven grens
                 self.licht_checken()        #Het constant checken van de lichtsensor
                 self.temperatuur_checken()  #Het constant checken van de temperatuursensor
-                ReadData.update_data(ReadData)
-                self.update_sensor()
                 self.licht_graph()          #laat de licht grafiek updaten
                 self.temperatuur_graph()    #laat de temp grafiek updaten
                 self.printing()
 
             else:
-               self.root.after(100, callback)
-        self.root.after(100, callback)
+                self.root.after(50, callback)
+        self.root.after(50, callback)
 
     def update_label(self):
         self.Label15 = Label(self.status_frame, text='          ', fg=self.status_color, bg=self.status_color)
@@ -308,7 +310,7 @@ class Main:
 
     """"Temperatuur grafiek"""
     def temperatuur_graph(self):
-        self.x = ReadData.count_data[-10:]
+        self.x = ReadData.count_data_temperatuur[-10:]
         self.y = ReadData.temperatuur_data[-10:]
 
         # x = [1, 2, 3, 4, 5]
@@ -316,15 +318,13 @@ class Main:
         # self.x = x
         # self.y = y
 
-        temp = self.temperatuur_grens
-        maxtemp = [temp, temp, temp, temp, temp, temp]
+
 
         figure = Figure(figsize=(4, 4), dpi=70)
         figure.suptitle('Temperatuur')
 
         a = figure.add_subplot(111)
         a.plot(self.x, self.y, marker='o')
-        a.plot(maxtemp, marker='o')
         a.grid()
 
 
@@ -336,11 +336,10 @@ class Main:
 
     """"Lichtintens grafiek"""
     def licht_graph(self):
-        self.x = ReadData.count_data[-10:]
+        self.x = ReadData.count_data_licht[-10:]
         self.y = ReadData.licht_data[-10:]
+        # print(ReadData.count_data)
 
-        licht = self.licht_grens
-        maxlicht = [licht, licht, licht, licht, licht, licht,]
 
 
         figure = Figure(figsize=(4, 4), dpi=70)
@@ -349,7 +348,6 @@ class Main:
 
         a = figure.add_subplot(111)
         a.plot(self.x, self.y, marker='o')
-        a.plot(maxlicht, marker='o')
         a.grid()
 
         canvas = FigureCanvasTkAgg(figure, master=self.graph_frame)

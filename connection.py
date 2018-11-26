@@ -8,8 +8,8 @@ import struct
 class Connectie:
     BAUDRATE = 19200
     TIMEOUT = 2
-    con = serial.Serial('COM10', BAUDRATE)
-    con2 = serial.Serial('COM6', BAUDRATE)
+    con = serial.Serial('COM6', BAUDRATE)
+    con2 = serial.Serial('COM9', BAUDRATE)
 
     def __init__(self):
         pass
@@ -87,6 +87,11 @@ class Connectie:
 
     def send_led(self, color):
         self.con2.write(struct.pack('>B', color))
+
+
+    def send_recieve(self):
+        self.con.write(struct.pack('>B', 0xaa))
+        self.con2.write(struct.pack('>B', 0xaa))
 
 
     # if __name__ == '__main__':

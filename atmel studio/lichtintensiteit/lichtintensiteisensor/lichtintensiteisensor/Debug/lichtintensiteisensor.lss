@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 00000088  00000000  00000000  000003f0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000ab2  00000000  00000000  00000478  2**0
+  6 .debug_info   00000ab4  00000000  00000000  00000478  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000007b8  00000000  00000000  00000f2a  2**0
+  7 .debug_abbrev 000007d3  00000000  00000000  00000f2c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000004c9  00000000  00000000  000016e2  2**0
+  8 .debug_line   000004c7  00000000  00000000  000016ff  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000150  00000000  00000000  00001bac  2**2
+  9 .debug_frame  00000150  00000000  00000000  00001bc8  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000004c3  00000000  00000000  00001cfc  2**0
+ 10 .debug_str    000004c3  00000000  00000000  00001d18  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000002b0  00000000  00000000  000021bf  2**0
+ 11 .debug_loc    00000268  00000000  00000000  000021db  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000078  00000000  00000000  0000246f  2**0
+ 12 .debug_ranges 00000078  00000000  00000000  00002443  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -330,47 +330,47 @@ int main(void)
  23c:	78 94       	sei
     while (1) 
     {
+		
 		send_trigger();
  23e:	0e 94 75 00 	call	0xea	; 0xea <send_trigger>
+		uint16_t distance = calc_cm(gv_counter);
+ 242:	80 91 01 01 	lds	r24, 0x0101	; 0x800101 <gv_counter>
+ 246:	90 91 02 01 	lds	r25, 0x0102	; 0x800102 <gv_counter+0x1>
+ 24a:	0e 94 8a 00 	call	0x114	; 0x114 <calc_cm>
+ 24e:	c8 2f       	mov	r28, r24
+		analog = get_adc_value();
+ 250:	0e 94 c1 00 	call	0x182	; 0x182 <get_adc_value>
+ 254:	80 93 03 01 	sts	0x0103, r24	; 0x800103 <analog>
+		transmit(0xf0);
+ 258:	80 ef       	ldi	r24, 0xF0	; 240
+ 25a:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
+		//_delay_ms(50);
+		transmit(distance);
+ 25e:	8c 2f       	mov	r24, r28
+ 260:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
+		//_delay_ms(50);
+		transmit(0x0f);
+ 264:	8f e0       	ldi	r24, 0x0F	; 15
+ 266:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
+		//_delay_ms(50);
+		transmit(analog);
+ 26a:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <analog>
+ 26e:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 242:	2f ef       	ldi	r18, 0xFF	; 255
- 244:	83 ed       	ldi	r24, 0xD3	; 211
- 246:	90 e3       	ldi	r25, 0x30	; 48
- 248:	21 50       	subi	r18, 0x01	; 1
- 24a:	80 40       	sbci	r24, 0x00	; 0
- 24c:	90 40       	sbci	r25, 0x00	; 0
- 24e:	e1 f7       	brne	.-8      	; 0x248 <main+0x20>
- 250:	00 c0       	rjmp	.+0      	; 0x252 <main+0x2a>
- 252:	00 00       	nop
-		_delay_ms(1000);
-		uint16_t distance = calc_cm(gv_counter);
- 254:	80 91 01 01 	lds	r24, 0x0101	; 0x800101 <gv_counter>
- 258:	90 91 02 01 	lds	r25, 0x0102	; 0x800102 <gv_counter+0x1>
- 25c:	0e 94 8a 00 	call	0x114	; 0x114 <calc_cm>
- 260:	c8 2f       	mov	r28, r24
-		analog = get_adc_value();
- 262:	0e 94 c1 00 	call	0x182	; 0x182 <get_adc_value>
- 266:	80 93 03 01 	sts	0x0103, r24	; 0x800103 <analog>
-		transmit(0xf0);
- 26a:	80 ef       	ldi	r24, 0xF0	; 240
- 26c:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
-		//_delay_ms(50);
-		transmit(distance);
- 270:	8c 2f       	mov	r24, r28
- 272:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
-		//_delay_ms(50);
-		transmit(0x0f);
- 276:	8f e0       	ldi	r24, 0x0F	; 15
- 278:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
-		//_delay_ms(50);
-		transmit(analog);
- 27c:	80 91 03 01 	lds	r24, 0x0103	; 0x800103 <analog>
- 280:	0e 94 b2 00 	call	0x164	; 0x164 <transmit>
+ 272:	2f ef       	ldi	r18, 0xFF	; 255
+ 274:	89 e6       	ldi	r24, 0x69	; 105
+ 276:	98 e1       	ldi	r25, 0x18	; 24
+ 278:	21 50       	subi	r18, 0x01	; 1
+ 27a:	80 40       	sbci	r24, 0x00	; 0
+ 27c:	90 40       	sbci	r25, 0x00	; 0
+ 27e:	e1 f7       	brne	.-8      	; 0x278 <main+0x50>
+ 280:	00 c0       	rjmp	.+0      	; 0x282 <main+0x5a>
+ 282:	00 00       	nop
  284:	dc cf       	rjmp	.-72     	; 0x23e <main+0x16>
 
 00000286 <__divmodsi4>:

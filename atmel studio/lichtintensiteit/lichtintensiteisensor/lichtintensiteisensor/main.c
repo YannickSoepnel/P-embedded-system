@@ -134,8 +134,8 @@ int main(void)
 	sei();
     while (1) 
     {
+		
 		send_trigger();
-		_delay_ms(1000);
 		uint16_t distance = calc_cm(gv_counter);
 		analog = get_adc_value();
 		transmit(0xf0);
@@ -145,6 +145,6 @@ int main(void)
 		transmit(0x0f);
 		//_delay_ms(50);
 		transmit(analog);
-			
+		_delay_ms(500);
     }
 }
