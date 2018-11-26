@@ -2,7 +2,7 @@ from tkinter import *
 import time
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from test2 import ReadData
+from retrieve_data import ReadData
 from connection import Connectie
 
 
