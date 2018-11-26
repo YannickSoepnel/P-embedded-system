@@ -1,5 +1,4 @@
 from tkinter import *
-import time
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from retrieve_data import ReadData
@@ -56,10 +55,6 @@ class Main:
         self.inforwindow = Button(self.button_frame, width=12, height=2, text="Click for info", fg="black", command=self.create_window)
         self.inforwindow.grid(row=1, column=0)
 
-
-        # self.afstand = Scale(self.status_frame, orient='horizontal', from_=0, to=165, length=200, command=self.afstand)
-        # self.afstand.set(90)
-        # self.afstand.grid(row=2, column=0, columnspan=2)
         self.temperatuur = Scale(self.status_frame, orient='horizontal', from_=-10, to=50, length=200, command=self.grens_temperatuur)
         self.temperatuur.set(20)
         self.temperatuur.grid(row=3, column=0, columnspan=2)
@@ -72,7 +67,6 @@ class Main:
 
         self.temperatuur_graph()
         self.licht_graph()
-
 
     def create_window(self):
         top = Toplevel()
@@ -116,6 +110,7 @@ class Main:
         button = Button(top, text="Exit info", width=10, height=1, command=top.destroy)
         button.grid(row=9, column=1)
 
+    """Functie waar je waardes kan printen voor het debuggen of testen van de code"""
     def printing(self):
         # print('knop: ' + str(self.knop))
         # print('rol status: ' + str(self.rol_status))
@@ -128,11 +123,10 @@ class Main:
         # print(ReadData.temperatuur_data)
         pass
 
-
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen door de twee knoppen"""
     def laten_uitrollen_arduino_button(self):
         self.rol_status = 1
-        if(self.geel == 0 and self.groen == 0):
+        if self.geel == 0 and self.groen == 0:
             self.knop = 1
             self.rood = 0
             self.groen = 0
@@ -141,9 +135,9 @@ class Main:
             Connectie.send_led(Connectie, 0x0f)
 
     def laten_inrollen_arduino_button(self):
-        if(self.rol_status == 0):
+        if self.rol_status == 0:
             pass
-        elif(self.rol_status == 1):
+        elif self.rol_status == 1:
             self.knop = 0
             self.rol_status = 0
             self.geel = 1
@@ -153,9 +147,8 @@ class Main:
             Connectie.send_led(Connectie, 0x0f)
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen als de lichtsensor over zijn grens gaat"""
-
     def laten_uitrollen_arduino_licht(self):
-        if(self.groen == 0):
+        if self.groen == 0:
             self.rol_status = 1
             self.licht_status = 1
             self.rood = 0
@@ -163,9 +156,9 @@ class Main:
             self.geel = 1
 
     def laten_inrollen_arduino_licht(self):
-        if(self.rol_status == 0):
+        if self.rol_status == 0:
             pass
-        elif(self.rol_status == 1):
+        elif self.rol_status == 1:
             self.rol_status = 0
             self.licht_status = 0
             self.geel = 1
@@ -173,11 +166,10 @@ class Main:
             self.rood = 0
 
     """De twee functies hieronder zijn de in en uitrol functie die worden aangeroepen als de temperatuursensor over zijn grens gaat"""
-
     def laten_inrollen_arduino_temp(self):
-        if(self.rol_status == 0):
+        if self.rol_status == 0:
             pass
-        elif(self.rol_status == 1):
+        elif self.rol_status == 1:
             self.rol_status = 0
             self.temperatuur_status = 0
             self.geel = 1
@@ -187,7 +179,7 @@ class Main:
             Connectie.send_led(Connectie, 0x0f)
 
     def laten_uitrollen_arduino_temp(self):
-        if(self.groen == 0):
+        if self.groen == 0:
             self.rol_status = 1
             self.temperatuur_status = 1
             self.rood = 0
@@ -197,9 +189,9 @@ class Main:
             Connectie.send_led(Connectie, 0x0f)
 
     def rollen(self):
-        if(self.afstand_rolluik > self.grens_rolluik and self.rol_status == 1):
+        if self.afstand_rolluik > self.grens_rolluik and self.rol_status == 1:
             self.uitrollen()
-        elif(self.afstand_rolluik < 10 and self.rol_status == 0):
+        elif self.afstand_rolluik < 10 and self.rol_status == 0:
             self.inrollen()
 
     def uitrollen(self):        #Deze functie wordt aangeroepen als de afstand van het rolluik over zijn grens gaat
@@ -209,8 +201,6 @@ class Main:
         Connectie.send_led(Connectie, 0x0f)
         Connectie.send_led(Connectie, 0x00)
 
-
-
     def inrollen(self):         # Deze functie wordt aangeroepen als de afstand van het rolluik onder zijn grens gaat
         self.geel = 0           # (dus als hij helemaal ingerold is)
         self.geel = 0
@@ -219,9 +209,9 @@ class Main:
         Connectie.send_led(Connectie, 0xff)
         Connectie.send_led(Connectie, 0x0f)
 
-
     def handle_click(self):
         i = 5
+
         def callback():
             nonlocal i
             i -= 1
@@ -263,15 +253,11 @@ class Main:
             self.licht_intensiteit = ReadData.licht_data[-1]
 
     """DEZE FUNCTIE SCHRIJFT DE WAARDE VAN SLIDER NAAR LICHT_GRENS"""
-
     def grens_licht(self, lux):
         self.licht_grens = int(lux)
 
     def grens_temperatuur(self, temperatuur):
         self.temperatuur_grens = int(temperatuur)
-
-
-
 
     """Update de kleur van het vakje dat het LEDje moet simuleren"""
     def color_update(self):
@@ -284,9 +270,7 @@ class Main:
         elif(self.groen == 1):
             self.status_color = 'green'
 
-
     """Checkt constant de waarde van de lichtsensor"""
-
     def licht_checken(self):
         #Als de licht intensiteit groter is dan de grens en het rolluik ingerold is
         if(self.licht_intensiteit > self.licht_grens and self.rol_status == 0):
@@ -313,20 +297,12 @@ class Main:
         self.x = ReadData.count_data_temperatuur[-10:]
         self.y = ReadData.temperatuur_data[-10:]
 
-        # x = [1, 2, 3, 4, 5]
-        # y = [1, 2, 3, 4, 5]
-        # self.x = x
-        # self.y = y
-
-
-
         figure = Figure(figsize=(4, 4), dpi=70)
         figure.suptitle('Temperatuur')
 
         a = figure.add_subplot(111)
         a.plot(self.x, self.y, marker='o')
         a.grid()
-
 
         canvas = FigureCanvasTkAgg(figure, master=self.graph_frame)
         canvas.draw()
@@ -338,13 +314,9 @@ class Main:
     def licht_graph(self):
         self.x = ReadData.count_data_licht[-10:]
         self.y = ReadData.licht_data[-10:]
-        # print(ReadData.count_data)
-
-
 
         figure = Figure(figsize=(4, 4), dpi=70)
         figure.suptitle('Licht intensiteit')
-
 
         a = figure.add_subplot(111)
         a.plot(self.x, self.y, marker='o')
@@ -355,7 +327,6 @@ class Main:
 
         graph_widget = canvas.get_tk_widget()
         graph_widget.grid(row=5, column=2, columnspan=2, sticky='nsew')
-
 
 
 main = Main()
